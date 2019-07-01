@@ -22,6 +22,6 @@
 
 #define strchr __strchrnul
 #define AS_STRCHRNUL
-#include "strchr.S"
+#include "sse/strchr.S"
 
 weak_alias (__strchrnul, strchrnul)
