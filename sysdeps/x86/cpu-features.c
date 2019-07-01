@@ -183,7 +183,11 @@ init_cpu_features (struct cpu_features *cpu_features)
 		   cpu_features->cpuid[COMMON_CPUID_INDEX_7].edx);
 
   /* Can we call xgetbv?  */
+#ifdef __KNC__
+  if (0)
+#else
   if (HAS_CPU_FEATURE (OSXSAVE))
+#endif
     {
       unsigned int xcrlow;
       unsigned int xcrhigh;
