@@ -17,6 +17,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <fenv.h>
+#include <sysdep.h>
 #include <math.h>
 
 int
@@ -41,12 +42,12 @@ fesetexceptflag (const fexcept_t *flagp, int excepts)
   __asm__ ("fldenv %0" : : "m" (*&temp));
 
   /* And now the same for SSE.  */
-  __asm__ ("stmxcsr %0" : "=m" (*&mxcsr));
+  __asm__ (STORE_MXCSR " %0" : "=m" (*&mxcsr));
 
   mxcsr &= ~(excepts & FE_ALL_EXCEPT);
   mxcsr |= *flagp & excepts & FE_ALL_EXCEPT;
 
-  __asm__ ("ldmxcsr %0" : : "m" (*&mxcsr));
+  __asm__ (LOAD_MXCSR " %0" : : "m" (*&mxcsr));
 
   /* Success.  */
   return 0;

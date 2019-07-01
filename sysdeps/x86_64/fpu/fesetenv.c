@@ -18,6 +18,7 @@
 
 #include <fenv.h>
 #include <fpu_control.h>
+#include <sysdep.h>
 #include <assert.h>
 
 
@@ -36,7 +37,7 @@ __fesetenv (const fenv_t *envp)
      Therefore, we get the current environment and replace the values
      we want to use from the environment specified by the parameter.  */
   __asm__ ("fnstenv %0\n"
-	   "stmxcsr %1" : "=m" (*&temp), "=m" (*&temp.__mxcsr));
+	   STORE_MXCSR " %1" : "=m" (*&temp), "=m" (*&temp.__mxcsr));
 
   if (envp == FE_DFL_ENV)
     {
@@ -104,7 +105,7 @@ __fesetenv (const fenv_t *envp)
     }
 
   __asm__ ("fldenv %0\n"
-	   "ldmxcsr %1" : : "m" (temp), "m" (temp.__mxcsr));
+	   LOAD_MXCSR " %1" : : "m" (temp), "m" (temp.__mxcsr));
 
   /* Success.  */
   return 0;
