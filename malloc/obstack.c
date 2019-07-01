@@ -90,7 +90,9 @@ enum
    abort gracefully or use longjump - but shouldn't return.  This
    variable by default points to the internal function
    'print_and_abort'.  */
-static _Noreturn void print_and_abort (void);
+#include <sys/cdefs.h>
+
+static void print_and_abort (void);
 void (*obstack_alloc_failed_handler) (void) = print_and_abort;
 
 /* Exit value used when 'print_and_abort' is used.  */
@@ -404,7 +406,7 @@ _obstack_memory_used (struct obstack *h)
 #  include <libio/iolibio.h>
 # endif
 
-static _Noreturn void
+static void
 print_and_abort (void)
 {
   /* Don't change any of these strings.  Yes, it would be possible to add

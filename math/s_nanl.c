@@ -18,23 +18,50 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <math.h>
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ieee754.h>
 
+#define L_(Ch) Ch
+#define SET_MANTISSA(flt, mant) \
+  do { union ieee854_long_double u;                                           \
+       u.d = (flt);                                                           \
+       if ((mant & 0x7fffffffffffffffULL) == 0)                               \
+         mant = 0x4000000000000000ULL;                                        \
+       u.ieee.mantissa0 = (((mant) >> 32) & 0x7fffffff) | 0x80000000;         \
+       u.ieee.mantissa1 = (mant) & 0xffffffff;                                \
+       (flt) = u.d;                                                           \
+  } while (0)
 
 #undef __nanl
 long double
 __nanl (const char *tagp)
 {
-  if (tagp[0] != '\0')
-    {
-      char buf[6 + strlen (tagp)];
-      sprintf (buf, "NAN(%s)", tagp);
-      return strtold (buf, NULL);
-    }
+  const char *cp = tagp;
 
-  return NAN;
+  while ((*cp >= L_('0') && *cp <= L_('9'))
+         || (*cp >= L_('A') && *cp <= L_('Z'))
+         || (*cp >= L_('a') && *cp <= L_('z'))
+         || *cp == L_('_'))
+    ++cp;
+
+  long double retval = NAN;
+  if (*cp != 0)
+    goto out;
+
+  /* This is a system-dependent way to specify the bitmask used for
+     the NaN.  We expect it to be a number which is put in the
+     mantissa of the number.  */
+  char *endp;
+  unsigned long long int mant;
+
+  mant = strtoull (tagp, &endp, 0);
+  if (endp == cp)
+    SET_MANTISSA (retval, mant);
+
+ out:
+  return retval;
 }
 weak_alias (__nanl, nanl)
