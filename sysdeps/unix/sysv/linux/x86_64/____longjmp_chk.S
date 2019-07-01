@@ -136,7 +136,7 @@ ENTRY(____longjmp_chk)
 	movl	$255, %ebx
 L(loop):
 	cmpq	%rbx, %rax
-	cmovb	%rax, %rbx
+	CMOVE (b, ae, %rax, %rbx, 100)
 	incsspq	%rbx
 	subq	%rbx, %rax
 	ja	L(loop)
