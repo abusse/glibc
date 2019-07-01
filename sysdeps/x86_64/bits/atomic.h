@@ -56,8 +56,9 @@ typedef uintmax_t uatomic_max_t;
 #endif
 
 #define __HAVE_64B_ATOMICS 1
+
 #if __GNUC_PREREQ (4, 7)
-#define USE_ATOMIC_COMPILER_BUILTINS 1
+#define USE_ATOMIC_COMPILER_BUILTINS 0
 #else
 #define USE_ATOMIC_COMPILER_BUILTINS 0
 #endif
