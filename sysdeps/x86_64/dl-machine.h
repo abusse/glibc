@@ -33,7 +33,7 @@
 static inline int __attribute__ ((unused))
 elf_machine_matches_host (const ElfW(Ehdr) *ehdr)
 {
-  return ehdr->e_machine == EM_X86_64;
+  return ehdr->e_machine == EM_HOST_MACHINE_TYPE;
 }
 
 
