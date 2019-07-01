@@ -32,7 +32,9 @@ __feholdexcept (fenv_t *envp)
 	   : "=m" (*envp), "=m" (envp->__mxcsr));
 
   /* Set the SSE MXCSR register.  */
-  mxcsr = (envp->__mxcsr | 0x1f80) & ~0x3f;
+  //  mxcsr = (envp->__mxcsr | 0x1f80) & ~0x3f;
+  // This is wrong for K1OM, as it sets MBZ reserved bits causing a segfault.
+  mxcsr = envp->__mxcsr & ~0x3f;
   __asm__ (LOAD_MXCSR " %0" : : "m" (*&mxcsr));
 
   return 0;
