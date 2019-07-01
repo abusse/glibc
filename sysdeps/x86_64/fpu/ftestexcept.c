@@ -17,6 +17,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <fenv.h>
+#include <sysdep.h>
 
 int
 fetestexcept (int excepts)
@@ -26,7 +27,7 @@ fetestexcept (int excepts)
 
   /* Get current exceptions.  */
   __asm__ ("fnstsw %0\n"
-	   "stmxcsr %1" : "=m" (*&temp), "=m" (*&mxscr));
+	   STORE_MXCSR " %1" : "=m" (*&temp), "=m" (*&mxscr));
 
   return (temp | mxscr) & excepts & FE_ALL_EXCEPT;
 }
