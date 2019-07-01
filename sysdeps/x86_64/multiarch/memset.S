@@ -58,4 +58,4 @@ END(memset)
 # endif
 #endif
 
-#include "../memset.S"
+#include "../sse/memset.S"

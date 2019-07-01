@@ -67,4 +67,4 @@ END(memcmp)
 # endif
 #endif
 
-#include "../memcmp.S"
+#include "../sse/memcmp.S"

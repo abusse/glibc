@@ -56,4 +56,4 @@ END(strchr)
 	.globl __GI_strchr; __GI_strchr = __strchr_sse2
 #endif
 
-#include "../strchr.S"
+#include "../sse/strchr.S"
