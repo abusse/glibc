@@ -62,7 +62,7 @@ ENTRY(__swapcontext)
 	movq	%rcx, oFPREGS(%rdi)
 	/* Save the floating-point environment.  */
 	fnstenv	(%rcx)
-	stmxcsr oMXCSR(%rdi)
+	STORE_MXCSR oMXCSR(%rdi)
 
 
 	/* The syscall destroys some registers, save them.  */
@@ -86,7 +86,7 @@ ENTRY(__swapcontext)
 	   rest.  */
 	movq	oFPREGS(%rsi), %rcx
 	fldenv	(%rcx)
-	ldmxcsr oMXCSR(%rsi)
+	LOAD_MXCSR oMXCSR(%rsi)
 
 	/* Load the new stack pointer and the preserved registers.  */
 	movq	oRSP(%rsi), %rsp

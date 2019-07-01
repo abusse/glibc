@@ -53,7 +53,7 @@ ENTRY(__setcontext)
 	   rest.  */
 	movq	oFPREGS(%rdi), %rcx
 	fldenv	(%rcx)
-	ldmxcsr oMXCSR(%rdi)
+	LOAD_MXCSR oMXCSR(%rdi)
 
 
 	/* Load the new stack pointer, the preserved registers and
