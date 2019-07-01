@@ -313,6 +313,8 @@ typedef struct
 #define EM_SLE9X	179	/* Infineon Tech. SLE9X */
 #define EM_L10M		180	/* Intel L10M */
 #define EM_K10M		181	/* Intel K10M */
+#define EM_L1OM	EM_L10M	/* Intel L1OM */
+#define EM_K1OM	EM_K10M	/* Intel K1OM */
 				/* reserved 182 */
 #define EM_AARCH64	183	/* ARM AARCH64 */
 				/* reserved 184 */
