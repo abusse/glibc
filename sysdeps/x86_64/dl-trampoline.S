@@ -68,6 +68,7 @@ _dl_runtime_resolve:
 #ifndef __ILP32__
 	# We also have to preserve bound registers.  These are nops if
 	# Intel MPX isn't available or disabled.
+#ifndef __KNC__
 # ifdef HAVE_MPX_SUPPORT
 	bndmov %bnd0, REGISTER_SAVE_BND0(%rsp)
 	bndmov %bnd1, REGISTER_SAVE_BND1(%rsp)
@@ -80,6 +81,7 @@ _dl_runtime_resolve:
 	.byte 0x66,0x0f,0x1b,0x5c,0x24,REGISTER_SAVE_BND3
 # endif
 #endif
+#endif
 	# Copy args pushed by PLT in register.
 	# %rdi: link_map, %rsi: reloc_index
 	movq (REGISTER_SAVE_AREA + 8)(%rsp), %rsi
@@ -89,6 +91,7 @@ _dl_runtime_resolve:
 #ifndef __ILP32__
 	# Restore bound registers.  These are nops if Intel MPX isn't
 	# avaiable or disabled.
+#ifndef __KNC__
 # ifdef HAVE_MPX_SUPPORT
 	bndmov REGISTER_SAVE_BND3(%rsp), %bnd3
 	bndmov REGISTER_SAVE_BND2(%rsp), %bnd2
@@ -100,6 +103,7 @@ _dl_runtime_resolve:
 	.byte 0x66,0x0f,0x1a,0x4c,0x24,REGISTER_SAVE_BND1
 	.byte 0x66,0x0f,0x1a,0x44,0x24,REGISTER_SAVE_BND0
 # endif
+#endif
 #endif
 	# Get register content back.
 	movq REGISTER_SAVE_R9(%rsp), %r9
@@ -180,15 +184,16 @@ _dl_runtime_profile:
 	/* We always store the XMM registers even if AVX is available.
 	   This is to provide backward binary compatibility for existing
 	   audit modules.  */
-	movaps %xmm0,		   (LR_XMM_OFFSET)(%rsp)
-	movaps %xmm1, (LR_XMM_OFFSET +   XMM_SIZE)(%rsp)
-	movaps %xmm2, (LR_XMM_OFFSET + XMM_SIZE*2)(%rsp)
-	movaps %xmm3, (LR_XMM_OFFSET + XMM_SIZE*3)(%rsp)
-	movaps %xmm4, (LR_XMM_OFFSET + XMM_SIZE*4)(%rsp)
-	movaps %xmm5, (LR_XMM_OFFSET + XMM_SIZE*5)(%rsp)
-	movaps %xmm6, (LR_XMM_OFFSET + XMM_SIZE*6)(%rsp)
-	movaps %xmm7, (LR_XMM_OFFSET + XMM_SIZE*7)(%rsp)
+        STORE_VEC_REG (0,              (LR_XMM_OFFSET)(%rsp))
+        STORE_VEC_REG (1, (LR_XMM_OFFSET +   XMM_SIZE)(%rsp))
+        STORE_VEC_REG (2, (LR_XMM_OFFSET + XMM_SIZE*2)(%rsp))
+        STORE_VEC_REG (3, (LR_XMM_OFFSET + XMM_SIZE*3)(%rsp))
+        STORE_VEC_REG (4, (LR_XMM_OFFSET + XMM_SIZE*4)(%rsp))
+        STORE_VEC_REG (5, (LR_XMM_OFFSET + XMM_SIZE*5)(%rsp))
+        STORE_VEC_REG (6, (LR_XMM_OFFSET + XMM_SIZE*6)(%rsp))
+        STORE_VEC_REG (7, (LR_XMM_OFFSET + XMM_SIZE*7)(%rsp))
 
+#ifndef __KNC__
 # ifndef __ILP32__
 #  ifdef HAVE_MPX_SUPPORT
 	bndmov %bnd0, 		   (LR_BND_OFFSET)(%rsp)  # Preserve bound
@@ -202,6 +207,7 @@ _dl_runtime_profile:
 	.byte 0x66,0x0f,0x1b,0x8c,0x24;.long (LR_BND_OFFSET + BND_SIZE*3)
 #  endif
 # endif
+#endif
 
 # if defined HAVE_AVX_SUPPORT || defined HAVE_AVX512_ASM_SUPPORT
 	.data
@@ -360,14 +366,14 @@ L(avx512_5):
 #  endif
 L(no_avx5):
 # endif
-	movdqa	%xmm0, %fs:RTLD_SAVESPACE_SSE+0*XMM_SIZE
-	movdqa	%xmm1, %fs:RTLD_SAVESPACE_SSE+1*XMM_SIZE
-	movdqa	%xmm2, %fs:RTLD_SAVESPACE_SSE+2*XMM_SIZE
-	movdqa	%xmm3, %fs:RTLD_SAVESPACE_SSE+3*XMM_SIZE
-	movdqa	%xmm4, %fs:RTLD_SAVESPACE_SSE+4*XMM_SIZE
-	movdqa	%xmm5, %fs:RTLD_SAVESPACE_SSE+5*XMM_SIZE
-	movdqa	%xmm6, %fs:RTLD_SAVESPACE_SSE+6*XMM_SIZE
-	movdqa	%xmm7, %fs:RTLD_SAVESPACE_SSE+7*XMM_SIZE
+        SAVE_VEC_REG (0, %fs:RTLD_SAVESPACE_SSE+0*XMM_SIZE)
+        SAVE_VEC_REG (1, %fs:RTLD_SAVESPACE_SSE+1*XMM_SIZE)
+        SAVE_VEC_REG (2, %fs:RTLD_SAVESPACE_SSE+2*XMM_SIZE)
+        SAVE_VEC_REG (3, %fs:RTLD_SAVESPACE_SSE+3*XMM_SIZE)
+        SAVE_VEC_REG (4, %fs:RTLD_SAVESPACE_SSE+4*XMM_SIZE)
+        SAVE_VEC_REG (5, %fs:RTLD_SAVESPACE_SSE+5*XMM_SIZE)
+        SAVE_VEC_REG (6, %fs:RTLD_SAVESPACE_SSE+6*XMM_SIZE)
+        SAVE_VEC_REG (7, %fs:RTLD_SAVESPACE_SSE+7*XMM_SIZE)
 	ret
 	cfi_endproc
 	.size _dl_x86_64_save_sse, .-_dl_x86_64_save_sse
@@ -409,14 +415,14 @@ L(avx512_6):
 #  endif
 L(no_avx6):
 # endif
-	movdqa	%fs:RTLD_SAVESPACE_SSE+0*XMM_SIZE, %xmm0
-	movdqa	%fs:RTLD_SAVESPACE_SSE+1*XMM_SIZE, %xmm1
-	movdqa	%fs:RTLD_SAVESPACE_SSE+2*XMM_SIZE, %xmm2
-	movdqa	%fs:RTLD_SAVESPACE_SSE+3*XMM_SIZE, %xmm3
-	movdqa	%fs:RTLD_SAVESPACE_SSE+4*XMM_SIZE, %xmm4
-	movdqa	%fs:RTLD_SAVESPACE_SSE+5*XMM_SIZE, %xmm5
-	movdqa	%fs:RTLD_SAVESPACE_SSE+6*XMM_SIZE, %xmm6
-	movdqa	%fs:RTLD_SAVESPACE_SSE+7*XMM_SIZE, %xmm7
+        RESTORE_VEC_REG (%fs:RTLD_SAVESPACE_SSE+0*XMM_SIZE, 0)
+        RESTORE_VEC_REG (%fs:RTLD_SAVESPACE_SSE+1*XMM_SIZE, 1)
+        RESTORE_VEC_REG (%fs:RTLD_SAVESPACE_SSE+2*XMM_SIZE, 2)
+        RESTORE_VEC_REG (%fs:RTLD_SAVESPACE_SSE+3*XMM_SIZE, 3)
+        RESTORE_VEC_REG (%fs:RTLD_SAVESPACE_SSE+4*XMM_SIZE, 4)
+        RESTORE_VEC_REG (%fs:RTLD_SAVESPACE_SSE+5*XMM_SIZE, 5)
+        RESTORE_VEC_REG (%fs:RTLD_SAVESPACE_SSE+6*XMM_SIZE, 6)
+        RESTORE_VEC_REG (%fs:RTLD_SAVESPACE_SSE+7*XMM_SIZE, 7)
 	ret
 	cfi_endproc
 	.size _dl_x86_64_restore_sse, .-_dl_x86_64_restore_sse

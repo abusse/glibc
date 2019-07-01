@@ -37,6 +37,10 @@ typedef struct
   int i[4];
 } __128bits;
 
+typedef struct
+{
+  long long array[8];
+} __512bits;
 
 /* Type for the dtv.  */
 typedef union dtv
@@ -74,7 +78,11 @@ typedef struct
   void *__private_ss;
   long int __glibc_reserved2;
   /* Have space for the post-AVX register size.  */
+#if defined __KNF__ || defined __KNC__
+  __512bits rtld_savespace_sse[8] __attribute__ ((aligned (64)));
+#else
   __128bits rtld_savespace_sse[8][4] __attribute__ ((aligned (32)));
+#endif
 
   void *__padding[8];
 } tcbhead_t;

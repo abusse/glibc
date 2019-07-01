@@ -62,24 +62,33 @@ __END_DECLS
 #else
 
 /* Registers for entry into PLT on x86-64.  */
-# if __GNUC_PREREQ (4,0)
+# if defined __KNF__ || defined __KNC__ 
+typedef float La_x86_64_xmm __attribute__ ((__vector_size__ (64)));
+
+typedef union
+{
+  La_x86_64_xmm xmm[1];
+} La_x86_64_vector __attribute__ ((aligned(64)));
+# else
+#  if __GNUC_PREREQ (4,0)
 typedef float La_x86_64_xmm __attribute__ ((__vector_size__ (16)));
 typedef float La_x86_64_ymm
     __attribute__ ((__vector_size__ (32), __aligned__ (16)));
 typedef double La_x86_64_zmm
     __attribute__ ((__vector_size__ (64), __aligned__ (16)));
-# else
+#  else
 typedef float La_x86_64_xmm __attribute__ ((__mode__ (__V4SF__)));
-# endif
+#  endif
 
 typedef union
 {
-# if __GNUC_PREREQ (4,0)
+#  if __GNUC_PREREQ (4,0)
   La_x86_64_ymm ymm[2];
   La_x86_64_zmm zmm[1];
-# endif
+#  endif
   La_x86_64_xmm xmm[4];
 } La_x86_64_vector __attribute__ ((__aligned__ (16)));
+#endif
 
 typedef struct La_x86_64_regs
 {
