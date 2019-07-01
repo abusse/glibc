@@ -330,7 +330,11 @@ _dl_diagnostics_cpuid_collect (struct cpuid_collected_data *ccd)
 
   /* Re-use the result of the official feature probing here.  */
   const struct cpu_features *cpu_features = __get_cpu_features ();
+#ifdef __KNC__
+  if (0)
+#else
   if (CPU_FEATURES_CPU_P (cpu_features, OSXSAVE))
+#endif
     {
       unsigned int xcrlow;
       unsigned int xcrhigh;
