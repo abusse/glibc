@@ -490,7 +490,11 @@ process_block (iconv_t cd, char *addr, size_t len, FILE **output,
 	  if (len == 0)
 	    n = 0;
 	  else
-	    errno = E2BIG;
+	    {
+		errno = E2BIG;
+		++addr;
+		--len;
+	    }
 	}
 
       if (outptr != outbuf)
