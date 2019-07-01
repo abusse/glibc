@@ -112,7 +112,7 @@ L(no_shstk):
 	/* Save the floating-point environment.  */
 	fnstenv	(%rcx)
 	fldenv	(%rcx)
-	stmxcsr oMXCSR(%rdi)
+	STORE_MXCSR oMXCSR(%rdi)
 
 	/* Save the current signal mask with
 	   rt_sigprocmask (SIG_BLOCK, NULL, set,_NSIG/8).  */

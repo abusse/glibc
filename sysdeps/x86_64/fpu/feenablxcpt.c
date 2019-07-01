@@ -18,6 +18,7 @@
    <https://www.gnu.org/licenses/>.  */
 
 #include <fenv.h>
+#include <sysdep.h>
 
 int
 feenableexcept (int excepts)
@@ -36,11 +37,11 @@ feenableexcept (int excepts)
   __asm__ ("fldcw %0" : : "m" (*&new_exc));
 
   /* And now the same for the SSE MXCSR register.  */
-  __asm__ ("stmxcsr %0" : "=m" (*&new));
+  __asm__ (STORE_MXCSR " %0" : "=m" (*&new));
 
   /* The SSE exception masks are shifted by 7 bits.  */
   new &= ~(excepts << 7);
-  __asm__ ("ldmxcsr %0" : : "m" (*&new));
+  __asm__ (LOAD_MXCSR " %0" : : "m" (*&new));
 
   return old_exc;
 }
