@@ -1,5 +1,5 @@
 /* Raise given exceptions.
-   Copyright (C) 2001-2022 Free Software Foundation, Inc.
+   Copyright (C) 2001-2020 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,6 +17,7 @@
    <https://www.gnu.org/licenses/>.  */
 
 #include <fenv.h>
+#include <sysdep.h>
 #include <math.h>
 
 int
@@ -29,23 +30,11 @@ __feraiseexcept (int excepts)
 
   /* First: invalid exception.  */
   if ((FE_INVALID & excepts) != 0)
-    {
-      /* One example of an invalid operation is 0.0 / 0.0.  */
-      float f = 0.0;
-
-      __asm__ __volatile__ ("divss %0, %0 " : "+x" (f));
-      (void) &f;
-    }
+    FP_INVALID_EXCEPTION
 
   /* Next: division by zero.  */
   if ((FE_DIVBYZERO & excepts) != 0)
-    {
-      float f = 1.0;
-      float g = 0.0;
-
-      __asm__ __volatile__ ("divss %1, %0" : "+x" (f) : "x" (g));
-      (void) &f;
-    }
+    FP_DIVBYZERO_EXCEPTION
 
   /* Next: overflow.  */
   if ((FE_OVERFLOW & excepts) != 0)

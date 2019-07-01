@@ -17,6 +17,7 @@
    <https://www.gnu.org/licenses/>.  */
 
 #include <fenv.h>
+#include <sysdep.h>
 
 int
 __fegetenv (fenv_t *envp)
@@ -25,7 +26,7 @@ __fegetenv (fenv_t *envp)
 	   /* fnstenv changes the exception mask, so load back the
 	      stored environment.  */
 	   "fldenv %0\n"
-	   "stmxcsr %1" : "=m" (*envp), "=m" (envp->__mxcsr));
+           STORE_MXCSR " %1" : "=m" (*envp), "=m" (envp->__mxcsr));
 
   /* Success.  */
   return 0;
