@@ -162,7 +162,11 @@ update_active (struct cpu_features *cpu_features)
     os_zmm = 4
   } os_vector_size = os_xmm;
   /* Can we call xgetbv?  */
+#ifdef __KNC__
+  if (0)
+#else
   if (CPU_FEATURES_CPU_P (cpu_features, OSXSAVE))
+#endif
     {
       unsigned int xcrlow;
       unsigned int xcrhigh;
