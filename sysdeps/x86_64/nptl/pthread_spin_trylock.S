@@ -32,6 +32,6 @@ ENTRY(pthread_spin_trylock)
 	LOCK
 	cmpxchgl %ecx, (%rdi)
 	movl	$EBUSY, %eax
-	cmovel	%ecx, %eax
+	CMOVE (e, ne, %ecx, %eax, 100)
 	retq
 END(pthread_spin_trylock)
