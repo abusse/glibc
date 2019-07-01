@@ -61,4 +61,4 @@ END(memset)
 # define strong_alias(original, alias)
 #endif
 
-#include "../memset.S"
+#include "../sse/memset.S"

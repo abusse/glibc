@@ -206,4 +206,4 @@ weak_alias (__strncasecmp, strncasecmp)
 	.globl __GI_STRCMP; __GI_STRCMP = STRCMP_SSE2
 #endif
 
-#include "../strcmp.S"
+#include "../sse/strcmp.S"
