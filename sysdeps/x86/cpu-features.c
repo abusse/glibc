@@ -105,7 +105,11 @@ get_common_indices (struct cpu_features *cpu_features,
 		   cpu_features->cpuid[COMMON_CPUID_INDEX_D_ECX_1].edx);
 
   /* Can we call xgetbv?  */
+#ifdef __KNC__
+  if (0)
+#else
   if (CPU_FEATURES_CPU_P (cpu_features, OSXSAVE))
+#endif
     {
       unsigned int xcrlow;
       unsigned int xcrhigh;
