@@ -17,6 +17,7 @@
    <https://www.gnu.org/licenses/>.  */
 
 #include <fenv.h>
+#include <sysdep.h>
 
 int
 fetestexcept (int excepts)
