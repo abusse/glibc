@@ -18,6 +18,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <fenv.h>
+#include <sysdep.h>
 
 int
 __feupdateenv (const fenv_t *envp)
@@ -26,7 +27,8 @@ __feupdateenv (const fenv_t *envp)
   unsigned int xtemp;
 
   /* Save current exceptions.  */
-  __asm__ ("fnstsw %0\n\tstmxcsr %1" : "=m" (*&temp), "=m" (xtemp));
+  __asm__ ("fnstsw %0\n"
+          STORE_MXCSR " %1" : "=m" (*&temp), "=m" (xtemp));
   temp = (temp | xtemp) & FE_ALL_EXCEPT;
 
   /* Install new environment.  */
