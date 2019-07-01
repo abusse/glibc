@@ -23,9 +23,15 @@
 #include <cpuid.h>
 #include <init-arch.h>
 
-#define is_intel GLRO(dl_x86_cpu_features).kind == arch_kind_intel
-#define is_amd GLRO(dl_x86_cpu_features).kind == arch_kind_amd
-#define max_cpuid GLRO(dl_x86_cpu_features).max_cpuid
+#ifndef is_intel
+# define is_intel GLRO(dl_x86_cpu_features).kind == arch_kind_intel
+#endif
+#ifndef is_amd
+# define is_amd GLRO(dl_x86_cpu_features).kind == arch_kind_amd
+#endif
+#ifndef max_cpuid
+# define max_cpuid GLRO(dl_x86_cpu_features).max_cpuid
+#endif
 
 static const struct intel_02_cache_info
 {
