@@ -111,7 +111,7 @@ L(4):	addq $256, %rsp		/* remove skipset */
 #ifdef USE_AS_STRPBRK
 	xorl %edx,%edx
 	orb %cl, %cl		/* was last character NUL? */
-	cmovzq %rdx, %rax	/* Yes:	return NULL */
+	CMOVE (z, nz, %rdx, %rax, 100)	/* Yes:	return NULL */
 #else
 	subq %rdx, %rax		/* we have to return the number of valid
 				   characters, so compute distance to first
