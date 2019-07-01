@@ -35,7 +35,7 @@
 /* ELF uses byte-counts for .align, most others use log2 of count of bytes.  */
 #define ALIGNARG(log2) 1<<log2
 #define ASM_SIZE_DIRECTIVE(name) .size name,.-name;
-
+#define ASM_TYPE_DIRECTIVE(name,typearg) .type name,typearg;
 
 /* Define an entry point visible from C.  */
 #define	ENTRY(name)							      \
@@ -135,6 +135,37 @@ lose:									      \
 #define R14_LP	r14
 #define R15_LP	r15
 
+/* Load MXCSR instruction.  */
+#define LOAD_MXCSR ldmxcsr
+/* Store MXCSR instruction.  */
+#define STORE_MXCSR stmxcsr
+
+/* Conditional move.  */
+#define CMOVE(TRUE_COND, FALSE_COND, SRC, DST, LABEL) \
+  cmov##TRUE_COND SRC, DST
+
+/* Load vector registers.  */
+#define LOAD_VEC_REG(SRC, REGNO) movaps SRC, %xmm##REGNO
+/* Store vector registers.  */
+#define STORE_VEC_REG(REGNO, DEST) movaps %xmm##REGNO, DEST
+/* Save vector registers.  */
+#define SAVE_VEC_REG(REGNO, DEST) movdqa %xmm##REGNO, DEST
+/* Restore vector registers.  */
+#define RESTORE_VEC_REG(SRC, REGNO) movdqa SRC, %xmm##REGNO
+
+/* Store float registers.  */
+#define STORE_FLOAT_REG(REGNO, DEST) movss %xmm##REGNO, DEST
+/* Load float registers.  */
+#define LOAD_FLOAT_REG(SRC, REGNO) movss SRC, %xmm##REGNO
+
+/* Store double registers.  */
+#define STORE_DOUBLE_REG(REGNO, DEST) movsd %xmm##REGNO, DEST
+/* Load double registers.  */
+#define LOAD_DOUBLE_REG(SRC, REGNO) movsd SRC, %xmm##REGNO
+
+/* Load mask register k1.  Not used by x86-64.  */
+#define LOAD_REG_K1
+
 #else	/* __ASSEMBLER__ */
 
 /* Long and pointer size in bytes.  */
@@ -163,6 +194,32 @@ lose:									      \
 #define R13_LP	"r13"
 #define R14_LP	"r14"
 #define R15_LP	"r15"
+
+/* Load MXCSR instruction.  */
+#define LOAD_MXCSR "ldmxcsr"
+/* Store MXCSR instruction.  */
+#define STORE_MXCSR "stmxcsr"
+
+/* FP invalid exception.  */
+#define FP_INVALID_EXCEPTION                                   \
+  {                                                            \
+    /* One example of a invalid operation is 0.0 / 0.0.  */    \
+    float f = 0.0;                                             \
+    __asm__ __volatile__ ("divss %0, %0 " : : "x" (f));                \
+    (void) &f;                                                 \
+  }
+
+/* FP invalid exception.  */
+#define FP_DIVBYZERO_EXCEPTION                                 \
+  {                                                            \
+    float f = 1.0;                                             \
+    float g = 0.0;                                             \
+    __asm__ __volatile__ ("divss %1, %0" : : "x" (f), "x" (g));        \
+    (void) &f;                                                 \
+  }
+
+/* Machine type in ELF header compatible with the running host.  */
+#define EM_HOST_MACHINE_TYPE EM_X86_64
 
 #endif	/* __ASSEMBLER__ */
 
