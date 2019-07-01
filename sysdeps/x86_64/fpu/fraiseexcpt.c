@@ -17,6 +17,7 @@
    <https://www.gnu.org/licenses/>.  */
 
 #include <fenv.h>
+#include <sysdep.h>
 #include <math-inline-asm.h>
 #include <math.h>
 
@@ -30,12 +31,11 @@ __feraiseexcept (int excepts)
 
   /* First: invalid exception.  */
   if ((FE_INVALID & excepts) != 0)
-    /* One example of an invalid operation is 0.0 / 0.0.  */
-    divss_inline_asm (0.0f, 0.0f);
+    FP_INVALID_EXCEPTION
 
   /* Next: division by zero.  */
   if ((FE_DIVBYZERO & excepts) != 0)
-    divss_inline_asm (1.0f, 0.0f);
+    FP_DIVBYZERO_EXCEPTION
 
   /* Next: overflow.  */
   if ((FE_OVERFLOW & excepts) != 0)
