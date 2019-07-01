@@ -285,14 +285,14 @@ _dl_runtime_profile:
 	movq  LR_R8_OFFSET(%rsp), %r8
 	movq  LR_R9_OFFSET(%rsp), %r9
 
-	movaps		    (LR_XMM_OFFSET)(%rsp), %xmm0
-	movaps	 (LR_XMM_OFFSET + XMM_SIZE)(%rsp), %xmm1
-	movaps (LR_XMM_OFFSET + XMM_SIZE*2)(%rsp), %xmm2
-	movaps (LR_XMM_OFFSET + XMM_SIZE*3)(%rsp), %xmm3
-	movaps (LR_XMM_OFFSET + XMM_SIZE*4)(%rsp), %xmm4
-	movaps (LR_XMM_OFFSET + XMM_SIZE*5)(%rsp), %xmm5
-	movaps (LR_XMM_OFFSET + XMM_SIZE*6)(%rsp), %xmm6
-	movaps (LR_XMM_OFFSET + XMM_SIZE*7)(%rsp), %xmm7
+        LOAD_VEC_REG (             (LR_XMM_OFFSET)(%rsp), 0)
+        LOAD_VEC_REG (  (LR_XMM_OFFSET + XMM_SIZE)(%rsp), 1)
+        LOAD_VEC_REG ((LR_XMM_OFFSET + XMM_SIZE*2)(%rsp), 2)
+        LOAD_VEC_REG ((LR_XMM_OFFSET + XMM_SIZE*3)(%rsp), 3)
+        LOAD_VEC_REG ((LR_XMM_OFFSET + XMM_SIZE*4)(%rsp), 4)
+        LOAD_VEC_REG ((LR_XMM_OFFSET + XMM_SIZE*5)(%rsp), 5)
+        LOAD_VEC_REG ((LR_XMM_OFFSET + XMM_SIZE*6)(%rsp), 6)
+        LOAD_VEC_REG ((LR_XMM_OFFSET + XMM_SIZE*7)(%rsp), 7)
 
 # ifdef RESTORE_AVX
 	/* Check if any xmm0-xmm7 registers are changed by audit
@@ -465,8 +465,8 @@ _dl_runtime_profile:
 	movq %rax, LRV_RAX_OFFSET(%rcx)
 	movq %rdx, LRV_RDX_OFFSET(%rcx)
 
-	movaps %xmm0, LRV_XMM0_OFFSET(%rcx)
-	movaps %xmm1, LRV_XMM1_OFFSET(%rcx)
+        STORE_VEC_REG (0, LRV_XMM0_OFFSET(%rcx))
+        STORE_VEC_REG (1, LRV_XMM1_OFFSET(%rcx))
 
 # ifdef RESTORE_AVX
 	/* This is to support AVX audit modules.  */
@@ -501,8 +501,8 @@ _dl_runtime_profile:
 	movq LRV_RAX_OFFSET(%rsp), %rax
 	movq LRV_RDX_OFFSET(%rsp), %rdx
 
-	movaps LRV_XMM0_OFFSET(%rsp), %xmm0
-	movaps LRV_XMM1_OFFSET(%rsp), %xmm1
+        LOAD_VEC_REG (LRV_XMM0_OFFSET(%rsp), 0)
+        LOAD_VEC_REG (LRV_XMM1_OFFSET(%rsp), 1)
 
 # ifdef RESTORE_AVX
 	/* Check if xmm0/xmm1 registers are changed by audit module.  */

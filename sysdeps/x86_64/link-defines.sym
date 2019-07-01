@@ -4,8 +4,13 @@
 --
 VECTOR_SIZE		sizeof (La_x86_64_vector)
 XMM_SIZE		sizeof (La_x86_64_xmm)
+#ifdef __KNC__
+YMM_SIZE		256/8/*sizeof (La_x86_64_ymm)*/
+ZMM_SIZE		512/8/*sizeof (La_x86_64_zmm)*/
+#else
 YMM_SIZE		sizeof (La_x86_64_ymm)
 ZMM_SIZE		sizeof (La_x86_64_zmm)
+#endif
 BND_SIZE		sizeof (__int128_t)
 
 LR_SIZE			sizeof (struct La_x86_64_regs)
