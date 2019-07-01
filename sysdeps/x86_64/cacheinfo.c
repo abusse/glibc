@@ -44,16 +44,28 @@
 #ifdef USE_MULTIARCH
 # include "multiarch/init-arch.h"
 
-# define is_intel __cpu_features.kind == arch_kind_intel
-# define is_amd __cpu_features.kind == arch_kind_amd
+# ifndef is_intel
+#  define is_intel __cpu_features.kind == arch_kind_intel
+# endif
+# ifndef is_amd
+#  define is_amd __cpu_features.kind == arch_kind_amd
+# endif
 # define max_cpuid __cpu_features.max_cpuid
 #else
   /* This spells out "GenuineIntel".  */
-# define is_intel \
+# ifndef is_intel
+#  define is_intel \
   ebx == 0x756e6547 && ecx == 0x6c65746e && edx == 0x49656e69
+# endif
   /* This spells out "AuthenticAMD".  */
-# define is_amd \
+# ifndef is_amd
+#  define is_amd \
   ebx == 0x68747541 && ecx == 0x444d4163 && edx == 0x69746e65
+# endif
+#endif
+
+#ifndef OVERRIDE_MAX_CPUID
+# define OVERRIDE_MAX_CPUID(max_cpuid)
 #endif
 
 static const struct intel_02_cache_info
@@ -488,6 +500,8 @@ __cache_sysconf (int name)
   __cpuid (0, max_cpuid, ebx, ecx, edx);
 #endif
 
+  OVERRIDE_MAX_CPUID (max_cpuid);
+
   if (is_intel)
     return handle_intel (name, max_cpuid);
 
@@ -558,6 +572,8 @@ init_cacheinfo (void)
   int max_cpuid;
   __cpuid (0, max_cpuid, ebx, ecx, edx);
 #endif
+
+  OVERRIDE_MAX_CPUID (max_cpuid);
 
   if (is_intel)
     {
