@@ -132,7 +132,7 @@ __pthread_cond_broadcast:
 	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
-	cmovne	%eax, %esi
+	CMOVE (ne, e, %eax, %esi, 100)
 	callq	__lll_lock_wait
 #if cond_lock != 0
 	subq	$cond_lock, %rdi
@@ -144,7 +144,7 @@ __pthread_cond_broadcast:
 	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
-	cmovne	%eax, %esi
+	CMOVE (ne, e, %eax, %esi, 100)
 	callq	__lll_unlock_wake
 	jmp	6b
 
@@ -153,7 +153,7 @@ __pthread_cond_broadcast:
 	cmp	$-1, %R8_LP
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
-	cmovne	%eax, %esi
+	CMOVE (ne, e, %eax, %esi, 100)
 	callq	__lll_unlock_wake
 	subq	$cond_lock-cond_futex, %rdi
 	jmp	8b
@@ -164,11 +164,11 @@ __pthread_cond_broadcast:
 #ifdef __ASSUME_PRIVATE_FUTEX
 	movl	$FUTEX_WAKE, %eax
 	movl	$(FUTEX_WAKE|FUTEX_PRIVATE_FLAG), %esi
-	cmove	%eax, %esi
+	CMOVE (e, ne, %eax, %esi, 100)
 #else
 	movl	$0, %eax
 	movl	%fs:PRIVATE_FUTEX, %esi
-	cmove	%eax, %esi
+	CMOVE (e, ne, %eax, %esi, 100)
 	orl	$FUTEX_WAKE, %esi
 #endif
 	movl	$SYS_futex, %eax

@@ -17,7 +17,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <pthread-errnos.h>
-
+#include <sysdep.h>
 
 #ifdef UP
 # define LOCK
@@ -34,6 +34,6 @@ pthread_spin_trylock:
 	LOCK
 	cmpxchgl %ecx, (%rdi)
 	movl	$EBUSY, %eax
-	cmovel	%ecx, %eax
+	CMOVE (e, ne, %ecx, %eax, 100)
 	retq
 	.size	pthread_spin_trylock,.-pthread_spin_trylock
