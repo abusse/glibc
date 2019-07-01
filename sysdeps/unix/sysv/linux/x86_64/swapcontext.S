@@ -190,7 +190,7 @@ L(unwind_shadow_stack):
 	movl	$255, %esi
 L(loop):
 	cmpq	%rsi, %rcx
-	cmovb	%rcx, %rsi
+	CMOVE (b, ae, %rcx, %rsi, 100)
 	incsspq	%rsi
 	subq	%rsi, %rcx
 	ja	L(loop)

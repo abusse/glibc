@@ -25,7 +25,7 @@ ENTRY(__pthread_spin_trylock)
 	lock
 	cmpxchgl %ecx, (%rdi)
 	movl	$EBUSY, %eax
-	cmovel	%ecx, %eax
+	CMOVE (e, ne, %ecx, %eax, 100)
 	retq
 END(__pthread_spin_trylock)
 versioned_symbol (libc, __pthread_spin_trylock, pthread_spin_trylock,
