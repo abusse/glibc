@@ -159,6 +159,7 @@ __init_cpu_features (void)
 		   __cpu_features.cpuid[COMMON_CPUID_INDEX_7].edx);
 
   /* Can we call xgetbv?  */
+#ifndef __KNC__
   if (CPUID_OSXSAVE)
     {
       unsigned int xcrlow;
@@ -187,7 +188,7 @@ __init_cpu_features (void)
 	    __cpu_features.feature[index_FMA4_Usable] |= bit_FMA4_Usable;
 	}
     }
-
+#endif
   __cpu_features.family = family;
   __cpu_features.model = model;
   atomic_write_barrier ();
