@@ -25,7 +25,11 @@
 
 #define LOCK_PREFIX "lock;"
 
-#define USE_ATOMIC_COMPILER_BUILTINS	1
+#ifdef __KNC__
+# define USE_ATOMIC_COMPILER_BUILTINS 0
+#else
+# define USE_ATOMIC_COMPILER_BUILTINS 1
+#endif
 
 #ifdef __x86_64__
 # define __HAVE_64B_ATOMICS		1
