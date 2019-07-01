@@ -136,7 +136,7 @@ ENTRY(__pthread_cond_signal)
 	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
-	cmovne	%eax, %esi
+	CMOVE (ne, e, %eax, %esi, 100)
 	callq	__lll_lock_wait
 #if cond_lock != 0
 	subq	$cond_lock, %rdi
@@ -152,7 +152,7 @@ ENTRY(__pthread_cond_signal)
 	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
-	cmovne	%eax, %esi
+	CMOVE (ne, e, %eax, %esi, 100)
 	callq	__lll_unlock_wake
 	jmp	6b
 END(__pthread_cond_signal)

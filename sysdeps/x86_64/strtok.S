@@ -89,7 +89,7 @@ ENTRY (FUNCTION)
 	/* If the pointer is NULL we have to use the stored value of
 	   the last run.  */
 	cmpq $0, %rdx
-	cmove %rax, %rdx
+	CMOVE (e, ne, %rax, %rdx, 100)
 	testq %rdx, %rdx
 	jz L(returnNULL)
 	movq %rsi, %rax		/* Get start of delimiter set.  */
@@ -188,7 +188,7 @@ L(8):	cmpq %rax, %rdx
 	/* Are we at end of string?  */
 	cmpb $0, %cl
 	leaq 1(%rdx), %rcx
-	cmovne %rcx, %rdx
+	CMOVE (ne, e, %rcx, %rdx, 100)
 
 	/* Store the pointer to the next character.  */
 	mov %RDX_LP, SAVE_PTR

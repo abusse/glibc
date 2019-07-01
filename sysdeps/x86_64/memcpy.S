@@ -256,7 +256,7 @@ L(fasttry):				/* first 1/2 L1 */
 #if IS_IN (libc)			/* only up to this algorithm outside of libc.so */
 	mov	__x86_data_cache_size_half(%rip), %R11_LP
 	cmpq	%rdx, %r11		/* calculate the smaller of */
-	cmovaq	%rdx, %r11		/* remaining bytes and 1/2 L1 */
+	CMOVE (a, be, %rdx, %r11, 100)		/* remaining bytes and 1/2 L1 */
 #endif
 
 L(fast):				/* good ol' MOVS */
@@ -305,7 +305,7 @@ L(fastafter):
 L(pretry):				/* first 1/2 L2 */
 	mov	__x86_shared_cache_size_half (%rip), %R8_LP
 	cmpq	%rdx, %r8		/* calculate the lesser of */
-	cmovaq	%rdx, %r8		/* remaining bytes and 1/2 L2 */
+	CMOVE (a, be, %rdx, %r8, 100)		/* remaining bytes and 1/2 L2 */
 
 L(pre):					/* 64-byte with prefetching */
 	movq	%r8, %rcx

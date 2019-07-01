@@ -170,7 +170,7 @@ __pthread_cond_timedwait:
 	   two clocks, represented using a single bit.  */
 	testl	$1, cond_nwaiters(%rdi)
 	movl	$FUTEX_CLOCK_REALTIME, %edx
-	cmove	%edx, %eax
+	CMOVE (e, ne, %edx, %eax, 100)
 	orl	%eax, %esi
 	movq	%r12, %rdx
 	addq	$cond_futex, %rdi
@@ -216,7 +216,7 @@ __pthread_cond_timedwait:
 	testl	$1, cond_nwaiters(%rdi)
 	movl	$FUTEX_CLOCK_REALTIME, %edx
 	movl	$0xffffffff, %r9d
-	cmove	%edx, %eax
+	CMOVE (e, ne, %edx, %eax, 100)
 	orl	%eax, %esi
 	movq	%r12, %rdx
 	addq	$cond_futex, %rdi
@@ -300,11 +300,11 @@ __pthread_cond_timedwait:
 #ifdef __ASSUME_PRIVATE_FUTEX
 	movl	$FUTEX_WAKE, %eax
 	movl	$(FUTEX_WAKE|FUTEX_PRIVATE_FLAG), %esi
-	cmove	%eax, %esi
+	CMOVE (e, ne, %eax, %esi, 100)
 #else
 	movl	$0, %eax
 	movl	%fs:PRIVATE_FUTEX, %esi
-	cmove	%eax, %esi
+	CMOVE (e, ne, %eax, %esi, 100)
 	orl	$FUTEX_WAKE, %esi
 #endif
 	movl	$SYS_futex, %eax
@@ -328,7 +328,7 @@ __pthread_cond_timedwait:
 	callq	__pthread_mutex_cond_lock
 
 63:	testq	%rax, %rax
-	cmoveq	%r14, %rax
+	CMOVE (e, ne, %r14, %rax, 100)
 
 48:	addq	$FRAME_SIZE, %rsp
 	cfi_adjust_cfa_offset(-FRAME_SIZE)
@@ -361,7 +361,7 @@ __pthread_cond_timedwait:
 	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
-	cmovne	%eax, %esi
+	CMOVE (ne, e, %eax, %esi, 100)
 	callq	__lll_lock_wait
 	jmp	32b
 
@@ -373,7 +373,7 @@ __pthread_cond_timedwait:
 	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
-	cmovne	%eax, %esi
+	CMOVE (ne, e, %eax, %esi, 100)
 	callq	__lll_unlock_wake
 	jmp	34b
 
@@ -385,7 +385,7 @@ __pthread_cond_timedwait:
 	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
-	cmovne	%eax, %esi
+	CMOVE (ne, e, %eax, %esi, 100)
 	callq	__lll_lock_wait
 #if cond_lock != 0
 	subq	$cond_lock, %rdi
@@ -400,7 +400,7 @@ __pthread_cond_timedwait:
 	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
-	cmovne	%eax, %esi
+	CMOVE (ne, e, %eax, %esi, 100)
 	callq	__lll_unlock_wake
 	jmp	41b
 
@@ -421,7 +421,7 @@ __pthread_cond_timedwait:
 	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
-	cmovne	%eax, %esi
+	CMOVE (ne, e, %eax, %esi, 100)
 	callq	__lll_unlock_wake
 
 47:	movq	(%rsp), %rax
@@ -477,7 +477,7 @@ __condvar_cleanup2:
 	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
-	cmovne	%eax, %esi
+	CMOVE (ne, e, %eax, %esi, 100)
 	callq	__lll_lock_wait
 #if cond_lock != 0
 	subq	$cond_lock, %rdi
@@ -513,11 +513,11 @@ __condvar_cleanup2:
 #ifdef __ASSUME_PRIVATE_FUTEX
 	movl	$FUTEX_WAKE, %eax
 	movl	$(FUTEX_WAKE|FUTEX_PRIVATE_FLAG), %esi
-	cmove	%eax, %esi
+	CMOVE (e, ne, %eax, %esi, 100)
 #else
 	movl	$0, %eax
 	movl	%fs:PRIVATE_FUTEX, %esi
-	cmove	%eax, %esi
+	CMOVE (e, ne, %eax, %esi, 100)
 	orl	$FUTEX_WAKE, %esi
 #endif
 	movl	$SYS_futex, %eax
@@ -538,7 +538,7 @@ __condvar_cleanup2:
 	LP_OP(cmp) $-1, dep_mutex-cond_lock(%rdi)
 	movl	$LLL_PRIVATE, %eax
 	movl	$LLL_SHARED, %esi
-	cmovne	%eax, %esi
+	CMOVE (ne, e, %eax, %esi, 100)
 	callq	__lll_unlock_wake
 
 	/* Wake up all waiters to make sure no signal gets lost.  */
@@ -550,11 +550,11 @@ __condvar_cleanup2:
 #ifdef __ASSUME_PRIVATE_FUTEX
 	movl	$FUTEX_WAKE, %eax
 	movl	$(FUTEX_WAKE|FUTEX_PRIVATE_FLAG), %esi
-	cmove	%eax, %esi
+	CMOVE (e, ne, %eax, %esi, 100)
 #else
 	movl	$0, %eax
 	movl	%fs:PRIVATE_FUTEX, %esi
-	cmove	%eax, %esi
+	CMOVE (e, ne, %eax, %esi, 100)
 	orl	$FUTEX_WAKE, %esi
 #endif
 	movl	$SYS_futex, %eax

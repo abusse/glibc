@@ -41,7 +41,7 @@ ENTRY (__vfork)
 	movl	$0x80000000, %ecx
 	movl	%esi, %edx
 	negl	%edx
-	cmove	%ecx, %edx
+	CMOVE (e, ne, %ecx, %edx, 100)
 	movl	%edx, %fs:PID
 
 	/* Stuff the syscall number in RAX and enter into the kernel.  */
