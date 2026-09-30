@@ -17,6 +17,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <fenv.h>
+#include <sysdep.h>
 #include <fpu_control.h>
 
 /* All exceptions, including the x86-specific "denormal operand"
@@ -37,12 +38,13 @@ fesetmode (const femode_t *modep)
       cw = _FPU_DEFAULT;
       /* Default MXCSR state has all bits zero except for those
 	 masking exceptions.  */
-      mxcsr |= FE_ALL_EXCEPT_X86 << 7;
+      mxcsr |= ((FE_ALL_EXCEPT_X86 << 7) & MXCSR_EXCEPT_MASK) | MXCSR_MBO;
     }
   else
     {
       cw = modep->__control_word;
-      mxcsr |= modep->__mxcsr & ~FE_ALL_EXCEPT_X86;
+      mxcsr |= (modep->__mxcsr & ~FE_ALL_EXCEPT_X86
+		& (MXCSR_EXCEPT_MASK | ~(FE_ALL_EXCEPT_X86 << 7)));
     }
   _FPU_SETCW (cw);
   __asm__ ("ldmxcsr %0" : : "m" (mxcsr));
