@@ -608,6 +608,11 @@ strong_alias (___pthread_mutex_lock, __pthread_mutex_lock)
 # endif
 versioned_symbol (libpthread, ___pthread_mutex_lock, pthread_mutex_lock,
 		  GLIBC_2_0);
+#if defined __KNC__ && SHLIB_COMPAT (libc, GLIBC_2_0, GLIBC_2_34)
+/* The K1OM libc exported pthread_mutex_lock at its GLIBC_2.14 baseline, while
+   libpthread starts at GLIBC_2.2.5.  */
+compat_symbol (libc, ___pthread_mutex_lock, pthread_mutex_lock, GLIBC_2_0);
+#endif
 
 # if OTHER_SHLIB_COMPAT (libpthread, GLIBC_2_0, GLIBC_2_34)
 compat_symbol (libpthread, ___pthread_mutex_lock, __pthread_mutex_lock,
