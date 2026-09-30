@@ -199,6 +199,10 @@ lose:									      \
 #define LOAD_MXCSR "ldmxcsr"
 /* Store MXCSR instruction.  */
 #define STORE_MXCSR "stmxcsr"
+/* SSE exception mask bits in MXCSR.  */
+#define MXCSR_EXCEPT_MASK 0x1f80
+/* MXCSR bits that must be set.  */
+#define MXCSR_MBO 0
 
 /* FP invalid exception.  */
 #define FP_INVALID_EXCEPTION                                   \
