@@ -109,7 +109,55 @@ _dl_tlsdesc_dynamic:
 	movq	%r9, REGISTER_SAVE_R9(%rsp)
 	movq	%r10, REGISTER_SAVE_R10(%rsp)
 	movq	%r11, REGISTER_SAVE_R11(%rsp)
-#ifdef USE_FXSAVE
+#ifdef USE_KNC_SAVE
+	fxsave	STATE_SAVE_OFFSET(%rsp)
+	vmovaps	%zmm0, (STATE_SAVE_OFFSET + 512 + 0 * 64)(%rsp)
+	vmovaps	%zmm1, (STATE_SAVE_OFFSET + 512 + 1 * 64)(%rsp)
+	vmovaps	%zmm2, (STATE_SAVE_OFFSET + 512 + 2 * 64)(%rsp)
+	vmovaps	%zmm3, (STATE_SAVE_OFFSET + 512 + 3 * 64)(%rsp)
+	vmovaps	%zmm4, (STATE_SAVE_OFFSET + 512 + 4 * 64)(%rsp)
+	vmovaps	%zmm5, (STATE_SAVE_OFFSET + 512 + 5 * 64)(%rsp)
+	vmovaps	%zmm6, (STATE_SAVE_OFFSET + 512 + 6 * 64)(%rsp)
+	vmovaps	%zmm7, (STATE_SAVE_OFFSET + 512 + 7 * 64)(%rsp)
+	vmovaps	%zmm8, (STATE_SAVE_OFFSET + 512 + 8 * 64)(%rsp)
+	vmovaps	%zmm9, (STATE_SAVE_OFFSET + 512 + 9 * 64)(%rsp)
+	vmovaps	%zmm10, (STATE_SAVE_OFFSET + 512 + 10 * 64)(%rsp)
+	vmovaps	%zmm11, (STATE_SAVE_OFFSET + 512 + 11 * 64)(%rsp)
+	vmovaps	%zmm12, (STATE_SAVE_OFFSET + 512 + 12 * 64)(%rsp)
+	vmovaps	%zmm13, (STATE_SAVE_OFFSET + 512 + 13 * 64)(%rsp)
+	vmovaps	%zmm14, (STATE_SAVE_OFFSET + 512 + 14 * 64)(%rsp)
+	vmovaps	%zmm15, (STATE_SAVE_OFFSET + 512 + 15 * 64)(%rsp)
+	vmovaps	%zmm16, (STATE_SAVE_OFFSET + 512 + 16 * 64)(%rsp)
+	vmovaps	%zmm17, (STATE_SAVE_OFFSET + 512 + 17 * 64)(%rsp)
+	vmovaps	%zmm18, (STATE_SAVE_OFFSET + 512 + 18 * 64)(%rsp)
+	vmovaps	%zmm19, (STATE_SAVE_OFFSET + 512 + 19 * 64)(%rsp)
+	vmovaps	%zmm20, (STATE_SAVE_OFFSET + 512 + 20 * 64)(%rsp)
+	vmovaps	%zmm21, (STATE_SAVE_OFFSET + 512 + 21 * 64)(%rsp)
+	vmovaps	%zmm22, (STATE_SAVE_OFFSET + 512 + 22 * 64)(%rsp)
+	vmovaps	%zmm23, (STATE_SAVE_OFFSET + 512 + 23 * 64)(%rsp)
+	vmovaps	%zmm24, (STATE_SAVE_OFFSET + 512 + 24 * 64)(%rsp)
+	vmovaps	%zmm25, (STATE_SAVE_OFFSET + 512 + 25 * 64)(%rsp)
+	vmovaps	%zmm26, (STATE_SAVE_OFFSET + 512 + 26 * 64)(%rsp)
+	vmovaps	%zmm27, (STATE_SAVE_OFFSET + 512 + 27 * 64)(%rsp)
+	vmovaps	%zmm28, (STATE_SAVE_OFFSET + 512 + 28 * 64)(%rsp)
+	vmovaps	%zmm29, (STATE_SAVE_OFFSET + 512 + 29 * 64)(%rsp)
+	vmovaps	%zmm30, (STATE_SAVE_OFFSET + 512 + 30 * 64)(%rsp)
+	vmovaps	%zmm31, (STATE_SAVE_OFFSET + 512 + 31 * 64)(%rsp)
+	kmov	%k1, %edx
+	movw	%dx, (STATE_SAVE_OFFSET + 512 + 32 * 64 + 1 * 2)(%rsp)
+	kmov	%k2, %edx
+	movw	%dx, (STATE_SAVE_OFFSET + 512 + 32 * 64 + 2 * 2)(%rsp)
+	kmov	%k3, %edx
+	movw	%dx, (STATE_SAVE_OFFSET + 512 + 32 * 64 + 3 * 2)(%rsp)
+	kmov	%k4, %edx
+	movw	%dx, (STATE_SAVE_OFFSET + 512 + 32 * 64 + 4 * 2)(%rsp)
+	kmov	%k5, %edx
+	movw	%dx, (STATE_SAVE_OFFSET + 512 + 32 * 64 + 5 * 2)(%rsp)
+	kmov	%k6, %edx
+	movw	%dx, (STATE_SAVE_OFFSET + 512 + 32 * 64 + 6 * 2)(%rsp)
+	kmov	%k7, %edx
+	movw	%dx, (STATE_SAVE_OFFSET + 512 + 32 * 64 + 7 * 2)(%rsp)
+#elif defined USE_FXSAVE
 	fxsave	STATE_SAVE_OFFSET(%rsp)
 #else
 	movl	$TLSDESC_CALL_STATE_SAVE_MASK, %eax
@@ -134,7 +182,55 @@ _dl_tlsdesc_dynamic:
 	/* %rdi already points to the tlsinfo data structure.  */
 	call	HIDDEN_JUMPTARGET (__tls_get_addr)
 	# Get register content back.
-#ifdef USE_FXSAVE
+#ifdef USE_KNC_SAVE
+	movzwl	(STATE_SAVE_OFFSET + 512 + 32 * 64 + 1 * 2)(%rsp), %edx
+	kmov	%edx, %k1
+	movzwl	(STATE_SAVE_OFFSET + 512 + 32 * 64 + 2 * 2)(%rsp), %edx
+	kmov	%edx, %k2
+	movzwl	(STATE_SAVE_OFFSET + 512 + 32 * 64 + 3 * 2)(%rsp), %edx
+	kmov	%edx, %k3
+	movzwl	(STATE_SAVE_OFFSET + 512 + 32 * 64 + 4 * 2)(%rsp), %edx
+	kmov	%edx, %k4
+	movzwl	(STATE_SAVE_OFFSET + 512 + 32 * 64 + 5 * 2)(%rsp), %edx
+	kmov	%edx, %k5
+	movzwl	(STATE_SAVE_OFFSET + 512 + 32 * 64 + 6 * 2)(%rsp), %edx
+	kmov	%edx, %k6
+	movzwl	(STATE_SAVE_OFFSET + 512 + 32 * 64 + 7 * 2)(%rsp), %edx
+	kmov	%edx, %k7
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 0 * 64)(%rsp), %zmm0
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 1 * 64)(%rsp), %zmm1
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 2 * 64)(%rsp), %zmm2
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 3 * 64)(%rsp), %zmm3
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 4 * 64)(%rsp), %zmm4
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 5 * 64)(%rsp), %zmm5
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 6 * 64)(%rsp), %zmm6
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 7 * 64)(%rsp), %zmm7
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 8 * 64)(%rsp), %zmm8
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 9 * 64)(%rsp), %zmm9
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 10 * 64)(%rsp), %zmm10
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 11 * 64)(%rsp), %zmm11
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 12 * 64)(%rsp), %zmm12
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 13 * 64)(%rsp), %zmm13
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 14 * 64)(%rsp), %zmm14
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 15 * 64)(%rsp), %zmm15
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 16 * 64)(%rsp), %zmm16
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 17 * 64)(%rsp), %zmm17
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 18 * 64)(%rsp), %zmm18
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 19 * 64)(%rsp), %zmm19
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 20 * 64)(%rsp), %zmm20
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 21 * 64)(%rsp), %zmm21
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 22 * 64)(%rsp), %zmm22
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 23 * 64)(%rsp), %zmm23
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 24 * 64)(%rsp), %zmm24
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 25 * 64)(%rsp), %zmm25
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 26 * 64)(%rsp), %zmm26
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 27 * 64)(%rsp), %zmm27
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 28 * 64)(%rsp), %zmm28
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 29 * 64)(%rsp), %zmm29
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 30 * 64)(%rsp), %zmm30
+	vmovaps	(STATE_SAVE_OFFSET + 512 + 31 * 64)(%rsp), %zmm31
+	fxrstor	STATE_SAVE_OFFSET(%rsp)
+#elif defined USE_FXSAVE
 	fxrstor	STATE_SAVE_OFFSET(%rsp)
 #else
 	/* Save and retore __tls_get_addr return value stored in RAX.  */
