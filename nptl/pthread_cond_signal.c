@@ -96,6 +96,11 @@ ___pthread_cond_signal (pthread_cond_t *cond)
 }
 versioned_symbol (libpthread, ___pthread_cond_signal, pthread_cond_signal,
 		  GLIBC_2_3_2);
+#if defined __KNC__ && SHLIB_COMPAT (libc, GLIBC_2_0, GLIBC_2_34)
+/* The K1OM libc exported pthread_cond_signal at its GLIBC_2.14 baseline, while
+   libpthread starts at GLIBC_2.2.5.  */
+compat_symbol (libc, ___pthread_cond_signal, pthread_cond_signal, GLIBC_2_0);
+#endif
 libc_hidden_ver (___pthread_cond_signal, __pthread_cond_signal)
 #ifndef SHARED
 strong_alias (___pthread_cond_signal, __pthread_cond_signal)
