@@ -1,5 +1,6 @@
-GLIBC_2.2.5
- GLIBC_2.2.5 A
+GLIBC_2.14
+ GLIBC_2.14 A
+ __mq_open_2 F
  aio_cancel F
  aio_cancel64 F
  aio_error F
@@ -22,22 +23,6 @@ GLIBC_2.2.5
  clock_settime F
  lio_listio F
  lio_listio64 F
- shm_open F
- shm_unlink F
- timer_create F
- timer_delete F
- timer_getoverrun F
- timer_gettime F
- timer_settime F
-GLIBC_2.3.3
- GLIBC_2.3.3 A
- timer_create F
- timer_delete F
- timer_getoverrun F
- timer_gettime F
- timer_settime F
-GLIBC_2.3.4
- GLIBC_2.3.4 A
  mq_close F
  mq_getattr F
  mq_notify F
@@ -48,10 +33,10 @@ GLIBC_2.3.4
  mq_timedreceive F
  mq_timedsend F
  mq_unlink F
-GLIBC_2.4
- GLIBC_2.4 A
- lio_listio F
- lio_listio64 F
-GLIBC_2.7
- GLIBC_2.7 A
- __mq_open_2 F
+ shm_open F
+ shm_unlink F
+ timer_create F
+ timer_delete F
+ timer_getoverrun F
+ timer_gettime F
+ timer_settime F
