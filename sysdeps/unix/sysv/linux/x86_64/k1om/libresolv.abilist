@@ -1,5 +1,5 @@
-GLIBC_2.2.5
- GLIBC_2.2.5 A
+GLIBC_2.14
+ GLIBC_2.14 A
  __b64_ntop F
  __b64_pton F
  __dn_comp F
@@ -20,6 +20,7 @@ GLIBC_2.2.5
  __p_fqnname F
  __p_option F
  __p_query F
+ __p_rcode F
  __p_secstodate F
  __p_time F
  __p_type F
@@ -59,16 +60,6 @@ GLIBC_2.2.5
  inet_net_ntop F
  inet_net_pton F
  inet_neta F
- res_gethostbyaddr F
- res_gethostbyname F
- res_gethostbyname2 F
- res_send_setqhook F
- res_send_setrhook F
-GLIBC_2.3.2
- GLIBC_2.3.2 A
- __p_rcode F
-GLIBC_2.9
- GLIBC_2.9 A
  ns_datetosecs F
  ns_format_ttl F
  ns_get16 F
@@ -95,3 +86,8 @@ GLIBC_2.9
  ns_sprintrr F
  ns_sprintrrf F
  ns_subdomain F
+ res_gethostbyaddr F
+ res_gethostbyname F
+ res_gethostbyname2 F
+ res_send_setqhook F
+ res_send_setrhook F
