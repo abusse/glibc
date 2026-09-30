@@ -40,7 +40,7 @@ fedisableexcept (int excepts)
   stmxcsr_inline_asm (&new);
 
   /* The SSE exception masks are shifted by 7 bits.  */
-  new |= excepts << 7;
+  new |= (excepts << 7) & MXCSR_EXCEPT_MASK;
   ldmxcsr_inline_asm (&new);
 
   return old_exc;

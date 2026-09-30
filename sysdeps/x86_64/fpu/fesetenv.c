@@ -54,7 +54,7 @@ __fesetenv (const fenv_t *envp)
       /* Clear SSE exceptions.  */
       temp.__mxcsr &= ~FE_ALL_EXCEPT_X86;
       /* Set mask for SSE MXCSR.  */
-      temp.__mxcsr |= (FE_ALL_EXCEPT_X86 << 7);
+      temp.__mxcsr |= (FE_ALL_EXCEPT_X86 << 7) & MXCSR_EXCEPT_MASK;
       /* Set rounding to FE_TONEAREST.  */
       temp.__mxcsr &= ~ 0x6000;
       temp.__mxcsr |= (FE_TONEAREST << 3);
@@ -82,7 +82,7 @@ __fesetenv (const fenv_t *envp)
       /* Do not mask exceptions.  */
       temp.__mxcsr &= ~(FE_ALL_EXCEPT << 7);
       /* Keep the "denormal operand" exception masked.  */
-      temp.__mxcsr |= (__FE_DENORM << 7);
+      temp.__mxcsr |= (__FE_DENORM << 7) & MXCSR_EXCEPT_MASK;
       /* Clear the FZ and DAZ bits.  */
       temp.__mxcsr &= ~0x8040;
     }

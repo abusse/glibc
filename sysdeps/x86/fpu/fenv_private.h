@@ -1,6 +1,15 @@
 #ifndef X86_FENV_PRIVATE_H
 #define X86_FENV_PRIVATE_H 1
 
+/* SSE exception mask bits in MXCSR; K1OM has none (setting them faults).  */
+#ifndef MXCSR_EXCEPT_MASK
+# ifdef __KNC__
+#  define MXCSR_EXCEPT_MASK 0
+# else
+#  define MXCSR_EXCEPT_MASK 0x1f80
+# endif
+#endif
+
 #include <bits/floatn.h>
 #include <fenv.h>
 #include <fpu_control.h>
@@ -25,7 +34,7 @@ libc_feholdexcept_sse (fenv_t *e)
   unsigned int mxcsr;
   stmxcsr_inline_asm (&mxcsr);
   e->__mxcsr = mxcsr;
-  mxcsr = (mxcsr | 0x1f80) & ~0x3f;
+  mxcsr = (mxcsr | MXCSR_EXCEPT_MASK) & ~0x3f;
   ldmxcsr_inline_asm (&mxcsr);
 }
 
@@ -64,7 +73,7 @@ libc_feholdexcept_setround_sse (fenv_t *e, int r)
   unsigned int mxcsr;
   stmxcsr_inline_asm (&mxcsr);
   e->__mxcsr = mxcsr;
-  mxcsr = ((mxcsr | 0x1f80) & ~0x603f) | (r << 3);
+  mxcsr = ((mxcsr | MXCSR_EXCEPT_MASK) & ~0x603f) | (r << 3);
   ldmxcsr_inline_asm (&mxcsr);
 }
 
@@ -309,7 +318,7 @@ libc_feholdexcept_setround_sse_ctx (struct rm_ctx *ctx, int r)
 {
   unsigned int mxcsr, new_mxcsr;
   stmxcsr_inline_asm (&mxcsr);
-  new_mxcsr = ((mxcsr | 0x1f80) & ~0x603f) | (r << 3);
+  new_mxcsr = ((mxcsr | MXCSR_EXCEPT_MASK) & ~0x603f) | (r << 3);
 
   ctx->env.__mxcsr = mxcsr;
   if (__glibc_unlikely (mxcsr != new_mxcsr))

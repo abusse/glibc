@@ -32,7 +32,7 @@ __feholdexcept (fenv_t *envp)
   asm volatile ("fnclex" : "=m" (*envp));
 
   /* Set the SSE MXCSR register.  */
-  mxcsr = (envp->__mxcsr | 0x1f80) & ~0x3f;
+  mxcsr = (envp->__mxcsr | MXCSR_EXCEPT_MASK) & ~0x3f;
   ldmxcsr_inline_asm (&mxcsr);
 
   return 0;
