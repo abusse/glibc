@@ -145,7 +145,8 @@ ENTRY(__cbrt)
 	fadd	%st(0)			/* 2*t2 : t2+2*xm : u : xm */
 			subl	%edx, %ecx
 	faddp	%st, %st(3)		/* t2+2*xm : u : 2*t2+xm */
-			shll	$3, %ecx
+			movslq	%ecx, %rcx
+			shlq	$3, %rcx
 	fmulp				/* u*(t2+2*xm) : 2*t2+xm */
 	fdivp	%st, %st(1)		/* u*(t2+2*xm)/(2*t2+xm) */
 #ifdef PIC
