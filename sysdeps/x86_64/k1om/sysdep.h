@@ -80,6 +80,14 @@ LABEL:
   }
 
 
+/* The K1OM MXCSR has no exception mask bits (vector exceptions are
+   always masked); setting bits 7-12 faults.  */
+#undef MXCSR_EXCEPT_MASK
+#define MXCSR_EXCEPT_MASK 0
+/* Bit 21 of the K1OM MXCSR is set by default and loading it clear faults.  */
+#undef MXCSR_MBO
+#define MXCSR_MBO 0x00200000
+
 /* Machine type in ELF header compatible with the running host.  */
 #undef EM_HOST_MACHINE_TYPE
 #define EM_HOST_MACHINE_TYPE EM_K1OM
