@@ -39,7 +39,7 @@ fedisableexcept (int excepts)
   __asm__ (STORE_MXCSR " %0" : "=m" (*&new));
 
   /* The SSE exception masks are shifted by 7 bits.  */
-  new |= excepts << 7;
+  new |= (excepts << 7) & MXCSR_EXCEPT_MASK;
   __asm__ (LOAD_MXCSR " %0" : : "m" (*&new));
 
   return old_exc;
