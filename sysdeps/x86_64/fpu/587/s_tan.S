@@ -5,7 +5,7 @@
  */
 
 #define __need_Emath
-#include <bits/errno.h>
+#include <errno.h>
 #include <machine/asm.h>
 
 RCSID("$NetBSD: s_tan.S,v 1.5 1995/05/09 00:30:00 jtc Exp $")
