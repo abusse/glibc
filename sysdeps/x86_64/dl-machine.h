@@ -72,6 +72,8 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
   extern void _dl_runtime_profile_sse (ElfW(Word)) attribute_hidden;
   extern void _dl_runtime_profile_avx (ElfW(Word)) attribute_hidden;
   extern void _dl_runtime_profile_avx512 (ElfW(Word)) attribute_hidden;
+  extern void _dl_runtime_resolve_knc (ElfW(Word)) attribute_hidden;
+  extern void _dl_runtime_profile_knc (ElfW(Word)) attribute_hidden;
 
   if (l->l_info[DT_JMPREL] && lazy)
     {
@@ -99,12 +101,16 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 	 end in this function.  */
       if (__glibc_unlikely (profile))
 	{
+#ifdef __KNC__
+	  *(ElfW(Addr) *) (got + 2) = (ElfW(Addr)) &_dl_runtime_profile_knc;
+#else
 	  if (HAS_ARCH_FEATURE (AVX512F_Usable))
 	    *(ElfW(Addr) *) (got + 2) = (ElfW(Addr)) &_dl_runtime_profile_avx512;
 	  else if (HAS_ARCH_FEATURE (AVX_Usable))
 	    *(ElfW(Addr) *) (got + 2) = (ElfW(Addr)) &_dl_runtime_profile_avx;
 	  else
 	    *(ElfW(Addr) *) (got + 2) = (ElfW(Addr)) &_dl_runtime_profile_sse;
+#endif
 
 	  if (GLRO(dl_profile) != NULL
 	      && _dl_name_match_p (GLRO(dl_profile), l))
@@ -117,6 +123,9 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 	  /* This function will get called to fix up the GOT entry
 	     indicated by the offset on the stack, and then jump to
 	     the resolved address.  */
+#ifdef __KNC__
+	  *(ElfW(Addr) *) (got + 2) = (ElfW(Addr)) &_dl_runtime_resolve_knc;
+#else
 	  if (GLRO(dl_x86_cpu_features).xsave_state_size != 0)
 	    *(ElfW(Addr) *) (got + 2)
 	      = (HAS_ARCH_FEATURE (XSAVEC_Usable)
@@ -125,6 +134,7 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 	  else
 	    *(ElfW(Addr) *) (got + 2)
 	      = (ElfW(Addr)) &_dl_runtime_resolve_fxsave;
+#endif
 	}
     }
 
