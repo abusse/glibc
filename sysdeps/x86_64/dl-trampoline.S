@@ -33,6 +33,40 @@
 #define REGISTER_SAVE_R8	(REGISTER_SAVE_RDI + 8)
 #define REGISTER_SAVE_R9	(REGISTER_SAVE_R8 + 8)
 
+#ifdef __KNC__
+/* K1OM passes FP and vector arguments in zmm0-7; it has neither SSE,
+   AVX nor XSAVE.  */
+# define VEC_SIZE		64
+# define VMOVA			vmovaps
+# define VEC(i)			zmm##i
+# ifdef SHARED
+# define _dl_runtime_profile	_dl_runtime_profile_knc
+# include "dl-trampoline.h"
+# undef _dl_runtime_profile
+# endif
+# undef VEC
+# undef VMOVA
+# undef VEC_SIZE
+
+# define USE_VEC_SAVE
+# define STATE_SAVE_ALIGNMENT	64
+# define _dl_runtime_resolve	_dl_runtime_resolve_knc
+# include "dl-trampoline.h"
+# undef _dl_runtime_resolve
+# undef USE_VEC_SAVE
+# undef STATE_SAVE_ALIGNMENT
+/* Whatever cpu-features.c selects is the K1OM variant.  */
+	.globl _dl_runtime_resolve_fxsave
+	.hidden _dl_runtime_resolve_fxsave
+	.set _dl_runtime_resolve_fxsave, _dl_runtime_resolve_knc
+	.globl _dl_runtime_resolve_xsave
+	.hidden _dl_runtime_resolve_xsave
+	.set _dl_runtime_resolve_xsave, _dl_runtime_resolve_knc
+	.globl _dl_runtime_resolve_xsavec
+	.hidden _dl_runtime_resolve_xsavec
+	.set _dl_runtime_resolve_xsavec, _dl_runtime_resolve_knc
+#else
+
 #define RESTORE_AVX
 
 #ifdef SHARED
@@ -102,3 +136,4 @@
 #undef _dl_runtime_resolve
 #undef USE_XSAVEC
 #undef STATE_SAVE_ALIGNMENT
+#endif

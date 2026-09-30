@@ -78,7 +78,24 @@ _dl_tlsdesc_undefweak:
 	cfi_endproc
 	.size	_dl_tlsdesc_undefweak, .-_dl_tlsdesc_undefweak
 
-#ifdef SHARED
+#if defined SHARED && defined __KNC__
+# define USE_KNC_SAVE
+# define STATE_SAVE_ALIGNMENT	64
+# define _dl_tlsdesc_dynamic	_dl_tlsdesc_dynamic_knc
+# include "dl-tlsdesc-dynamic.h"
+# undef _dl_tlsdesc_dynamic
+# undef USE_KNC_SAVE
+/* Whatever cpu-features.c selects is the K1OM variant.  */
+	.globl _dl_tlsdesc_dynamic_fxsave
+	.hidden _dl_tlsdesc_dynamic_fxsave
+	.set _dl_tlsdesc_dynamic_fxsave, _dl_tlsdesc_dynamic_knc
+	.globl _dl_tlsdesc_dynamic_xsave
+	.hidden _dl_tlsdesc_dynamic_xsave
+	.set _dl_tlsdesc_dynamic_xsave, _dl_tlsdesc_dynamic_knc
+	.globl _dl_tlsdesc_dynamic_xsavec
+	.hidden _dl_tlsdesc_dynamic_xsavec
+	.set _dl_tlsdesc_dynamic_xsavec, _dl_tlsdesc_dynamic_knc
+#elif defined SHARED
 # if MINIMUM_X86_ISA_LEVEL < AVX_X86_ISA_LEVEL
 #  define USE_FXSAVE
 #  define STATE_SAVE_ALIGNMENT	16

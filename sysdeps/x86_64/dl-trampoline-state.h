@@ -28,8 +28,12 @@
 /* Local stack area before jumping to function address: RBX.  */
 # define LOCAL_STORAGE_AREA	8
 # define BASE			rbx
-# ifdef USE_FXSAVE
-/* Use fxsave to save XMM registers.  */
+# ifdef USE_KNC_SAVE
+/* K1OM: x87 state (fxsave), zmm0-31 and k1-k7.  */
+#  define REGISTER_SAVE_AREA	(512 + 32 * 64 + 64 + STATE_SAVE_OFFSET)
+# elif defined USE_FXSAVE || defined USE_VEC_SAVE
+/* Use fxsave to save XMM registers, or save the 8 argument vector
+   registers of K1OM (8 x 64 bytes).  */
 #  define REGISTER_SAVE_AREA	(512 + STATE_SAVE_OFFSET)
 #  if (REGISTER_SAVE_AREA % 16) != 0
 #   error REGISTER_SAVE_AREA must be multiple of 16

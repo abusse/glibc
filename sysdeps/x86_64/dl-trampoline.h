@@ -69,7 +69,16 @@ _dl_runtime_resolve:
 	movq %rdi, REGISTER_SAVE_RDI(%rsp)
 	movq %r8, REGISTER_SAVE_R8(%rsp)
 	movq %r9, REGISTER_SAVE_R9(%rsp)
-# ifdef USE_FXSAVE
+# ifdef USE_VEC_SAVE
+	STORE_VEC_REG (0, (STATE_SAVE_OFFSET + 0 * 64)(%rsp))
+	STORE_VEC_REG (1, (STATE_SAVE_OFFSET + 1 * 64)(%rsp))
+	STORE_VEC_REG (2, (STATE_SAVE_OFFSET + 2 * 64)(%rsp))
+	STORE_VEC_REG (3, (STATE_SAVE_OFFSET + 3 * 64)(%rsp))
+	STORE_VEC_REG (4, (STATE_SAVE_OFFSET + 4 * 64)(%rsp))
+	STORE_VEC_REG (5, (STATE_SAVE_OFFSET + 5 * 64)(%rsp))
+	STORE_VEC_REG (6, (STATE_SAVE_OFFSET + 6 * 64)(%rsp))
+	STORE_VEC_REG (7, (STATE_SAVE_OFFSET + 7 * 64)(%rsp))
+# elif defined USE_FXSAVE
 	fxsave STATE_SAVE_OFFSET(%rsp)
 # else
 	movl $STATE_SAVE_MASK, %eax
@@ -98,7 +107,16 @@ _dl_runtime_resolve:
 	call _dl_fixup		# Call resolver.
 	mov %RAX_LP, %R11_LP	# Save return value
 	# Get register content back.
-# ifdef USE_FXSAVE
+# ifdef USE_VEC_SAVE
+	LOAD_VEC_REG ((STATE_SAVE_OFFSET + 0 * 64)(%rsp), 0)
+	LOAD_VEC_REG ((STATE_SAVE_OFFSET + 1 * 64)(%rsp), 1)
+	LOAD_VEC_REG ((STATE_SAVE_OFFSET + 2 * 64)(%rsp), 2)
+	LOAD_VEC_REG ((STATE_SAVE_OFFSET + 3 * 64)(%rsp), 3)
+	LOAD_VEC_REG ((STATE_SAVE_OFFSET + 4 * 64)(%rsp), 4)
+	LOAD_VEC_REG ((STATE_SAVE_OFFSET + 5 * 64)(%rsp), 5)
+	LOAD_VEC_REG ((STATE_SAVE_OFFSET + 6 * 64)(%rsp), 6)
+	LOAD_VEC_REG ((STATE_SAVE_OFFSET + 7 * 64)(%rsp), 7)
+# elif defined USE_FXSAVE
 	fxrstor STATE_SAVE_OFFSET(%rsp)
 # else
 	movl $STATE_SAVE_MASK, %eax
@@ -191,14 +209,14 @@ _dl_runtime_profile:
 	/* We always store the XMM registers even if AVX is available.
 	   This is to provide backward binary compatibility for existing
 	   audit modules.  */
-	VMOVA %xmm0, (LR_XMM_OFFSET + XMM_SIZE*0)(%rsp)
-	VMOVA %xmm1, (LR_XMM_OFFSET + XMM_SIZE*1)(%rsp)
-	VMOVA %xmm2, (LR_XMM_OFFSET + XMM_SIZE*2)(%rsp)
-	VMOVA %xmm3, (LR_XMM_OFFSET + XMM_SIZE*3)(%rsp)
-	VMOVA %xmm4, (LR_XMM_OFFSET + XMM_SIZE*4)(%rsp)
-	VMOVA %xmm5, (LR_XMM_OFFSET + XMM_SIZE*5)(%rsp)
-	VMOVA %xmm6, (LR_XMM_OFFSET + XMM_SIZE*6)(%rsp)
-	VMOVA %xmm7, (LR_XMM_OFFSET + XMM_SIZE*7)(%rsp)
+	STORE_VEC_REG (0, (LR_XMM_OFFSET)(%rsp))
+	STORE_VEC_REG (1, (LR_XMM_OFFSET + XMM_SIZE*1)(%rsp))
+	STORE_VEC_REG (2, (LR_XMM_OFFSET + XMM_SIZE*2)(%rsp))
+	STORE_VEC_REG (3, (LR_XMM_OFFSET + XMM_SIZE*3)(%rsp))
+	STORE_VEC_REG (4, (LR_XMM_OFFSET + XMM_SIZE*4)(%rsp))
+	STORE_VEC_REG (5, (LR_XMM_OFFSET + XMM_SIZE*5)(%rsp))
+	STORE_VEC_REG (6, (LR_XMM_OFFSET + XMM_SIZE*6)(%rsp))
+	STORE_VEC_REG (7, (LR_XMM_OFFSET + XMM_SIZE*7)(%rsp))
 
 # ifdef RESTORE_AVX
 	/* This is to support AVX audit modules.  */
