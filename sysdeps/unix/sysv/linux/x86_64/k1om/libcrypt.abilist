@@ -1,5 +1,5 @@
-GLIBC_2.2.5
- GLIBC_2.2.5 A
+GLIBC_2.14
+ GLIBC_2.14 A
  crypt F
  crypt_r F
  encrypt F
