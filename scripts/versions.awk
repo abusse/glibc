@@ -95,8 +95,14 @@ function ord(c) {
 # Some targets do not set the ABI baseline for libdl.  As a result,
 # symbols originally in libdl need to be moved under historic symbol
 # versions, without altering the baseline version for libc itself.
+# An optional list of versions replaces the default GLIBC_2.0 GLIBC_2.1.
 /^ *!libc_pre_versions/ {
     libc_pre_versions_active = 1;
+    if (NF > 1) {
+	libc_pre_versions_n = NF - 1;
+	for (i = 2; i <= NF; ++i)
+	    libc_pre_versions_list[i - 1] = $i;
+    }
 }
 
 function libc_pre_versions() {
@@ -104,13 +110,19 @@ function libc_pre_versions() {
     # if symbols are moved into libc.  The abilist files and the other
     # targets (with a real GLIBC_2.0 baseline) provide testing
     # coverage.
-    printf("\
-GLIBC_2.0 {\n\
-};\n\
-GLIBC_2.1 {\n\
-} GLIBC_2.0;\n\
-") > outfile;
-    return "GLIBC_2.1";
+    if (!libc_pre_versions_n) {
+	libc_pre_versions_n = 2;
+	libc_pre_versions_list[1] = "GLIBC_2.0";
+	libc_pre_versions_list[2] = "GLIBC_2.1";
+    }
+    for (i = 1; i <= libc_pre_versions_n; ++i) {
+	if (i == 1)
+	    printf("%s {\n};\n", libc_pre_versions_list[i]) > outfile;
+	else
+	    printf("%s {\n} %s;\n", libc_pre_versions_list[i],
+		   libc_pre_versions_list[i - 1]) > outfile;
+    }
+    return libc_pre_versions_list[libc_pre_versions_n];
 }
 
 function closeversion(name, oldname) {
