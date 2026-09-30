@@ -32,7 +32,7 @@ __feholdexcept (fenv_t *envp)
 	   : "=m" (*envp), "=m" (envp->__mxcsr));
 
   /* Set the SSE MXCSR register.  */
-  mxcsr = (envp->__mxcsr | 0x1f80) & ~0x3f;
+  mxcsr = (envp->__mxcsr | MXCSR_EXCEPT_MASK) & ~0x3f;
   __asm__ ("ldmxcsr %0" : : "m" (*&mxcsr));
 
   return 0;
