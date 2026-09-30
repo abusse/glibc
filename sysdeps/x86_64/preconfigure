@@ -62,6 +62,8 @@ x86_64/k1om)
   fi
   multi_arch=no
   build_mathvec=no
+  # KNC is below the x86-64 baseline ISA level (no MMX/SSE/SSE2/CMOV)
+  libc_cv_include_x86_isa_level=no
   libc_cv_cc_sse4=no
   libc_cv_cc_avx=no
   libc_cv_cc_avx512=no
