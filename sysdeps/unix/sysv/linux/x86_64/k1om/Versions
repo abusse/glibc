@@ -1,0 +1,23 @@
+libpthread {
+  GLIBC_2.2.5 {
+    __vfork;
+    __wait;
+    nanosleep;
+    pthread_attr_destroy;
+    pthread_attr_getdetachstate;
+    pthread_attr_getinheritsched;
+    pthread_attr_getschedparam;
+    pthread_attr_init;
+    pthread_attr_setdetachstate;
+    pthread_attr_setinheritsched;
+    pthread_attr_setschedparam;
+    pthread_equal;
+    pthread_self;
+    vfork;
+    wait;
+    waitpid;
+  }
+  GLIBC_2.2.6 {
+    __nanosleep;
+  }
+}
