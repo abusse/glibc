@@ -549,11 +549,11 @@ __pthread_cond_timedwait:
 # ifdef __ASSUME_PRIVATE_FUTEX
 	movl	$FUTEX_WAIT, %eax
 	movl	$(FUTEX_WAIT|FUTEX_PRIVATE_FLAG), %esi
-	CMOVE (ne, e, %eax, %esi, 100)
+	CMOVE (e, ne, %eax, %esi, 100)
 # else
 	movl	$0, %eax
 	movl	%fs:PRIVATE_FUTEX, %esi
-	CMOVE (ne, e, %eax, %esi, 100)
+	CMOVE (e, ne, %eax, %esi, 100)
 #  if FUTEX_WAIT != 0
 	orl	$FUTEX_WAIT, %esi
 #  endif
@@ -724,11 +724,11 @@ __condvar_cleanup2:
 #ifdef __ASSUME_PRIVATE_FUTEX
 	movl	$FUTEX_WAKE, %eax
 	movl	$(FUTEX_WAKE|FUTEX_PRIVATE_FLAG), %esi
-	CMOVE (ne, e, %eax, %esi, 100)
+	CMOVE (e, ne, %eax, %esi, 100)
 #else
 	movl	$0, %eax
 	movl	%fs:PRIVATE_FUTEX, %esi
-	CMOVE (ne, e, %eax, %esi, 100)
+	CMOVE (e, ne, %eax, %esi, 100)
 	orl	$FUTEX_WAKE, %esi
 #endif
 	movl	$SYS_futex, %eax
@@ -761,11 +761,11 @@ __condvar_cleanup2:
 #ifdef __ASSUME_PRIVATE_FUTEX
 	movl	$FUTEX_WAKE, %eax
 	movl	$(FUTEX_WAKE|FUTEX_PRIVATE_FLAG), %esi
-	CMOVE (ne, e, %eax, %esi, 100)
+	CMOVE (e, ne, %eax, %esi, 100)
 #else
 	movl	$0, %eax
 	movl	%fs:PRIVATE_FUTEX, %esi
-	CMOVE (ne, e, %eax, %esi, 100)
+	CMOVE (e, ne, %eax, %esi, 100)
 	orl	$FUTEX_WAKE, %esi
 #endif
 	movl	$SYS_futex, %eax
