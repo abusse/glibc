@@ -202,7 +202,17 @@ void __sfp_handle_exceptions (int);
       __sfp_handle_exceptions (_fex);		\
   } while (0);
 
-#define FP_TRAPPING_EXCEPTIONS ((~_fcw >> FP_EX_SHIFT) & FP_EX_ALL)
+#ifdef __KNC__
+/* The K1OM MXCSR exception masks cannot be set (vector exceptions are
+   always masked); which exceptions trap is set in the x87 control word,
+   whose low bits have the same layout.  */
+# define FP_TRAPPING_EXCEPTIONS					\
+  ({ unsigned short int __knc_cw;				\
+     __asm__ __volatile__ ("fnstcw %0" : "=m" (__knc_cw));	\
+     (~__knc_cw) & FP_EX_ALL; })
+#else
+# define FP_TRAPPING_EXCEPTIONS ((~_fcw >> FP_EX_SHIFT) & FP_EX_ALL)
+#endif
 
 #define FP_ROUNDMODE		(_fcw & FP_RND_MASK)
 
