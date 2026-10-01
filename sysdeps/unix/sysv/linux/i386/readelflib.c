@@ -37,6 +37,9 @@ process_elf_file (const char *file_name, const char *lib, int *flag,
   switch (elf_header->e_machine)
     {
     case EM_X86_64:
+#ifdef EM_K1OM
+    case EM_K1OM:
+#endif
       if (elf_header->e_ident[EI_CLASS] == ELFCLASS64)
 	/* X86-64 64bit libraries are always libc.so.6+.  */
 	file_flag = FLAG_X8664_LIB64|FLAG_ELF_LIBC6;
