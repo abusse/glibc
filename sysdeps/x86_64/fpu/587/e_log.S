@@ -7,21 +7,16 @@
 
 #include <machine/asm.h>
 
-RCSID("$NetBSD: e_log.S,v 1.4 1995/05/08 23:48:39 jtc Exp $")
+	.section .rodata.cst8,"aM",@progbits,8
 
-#ifdef __ELF__
-	.section .rodata
-#else
-	.text
-#endif
-	.align ALIGNARG(4)
-	ASM_TYPE_DIRECTIVE(one,@object)
+	.p2align 3
+	.type one,@object
 one:	.double 1.0
 	ASM_SIZE_DIRECTIVE(one)
 	/* It is not important that this constant is precise.  It is only
 	   a value which is known to be on the safe side for using the
 	   fyl2xp1 instruction.  */
-	ASM_TYPE_DIRECTIVE(limit,@object)
+	.type limit,@object
 limit:	.double 0.29
 	ASM_SIZE_DIRECTIVE(limit)
 
@@ -33,7 +28,7 @@ ENTRY(__ieee754_log)
 	LOAD_REG_K1
 	STORE_DOUBLE_REG (0, -8(%rsp))
 	fldln2			// log(2)
-	fldl	-8(%rsp)	// x : log(2)
+	fldl	-8(%rsp)		// x : log(2)
 	fxam
 	fnstsw
 	fld	%st		// x : x : log(2)
@@ -46,7 +41,13 @@ ENTRY(__ieee754_log)
 	fnstsw			// x-1 : x : log(2)
 	andb	$0x45, %ah
 	jz	2f
-	fstp	%st(1)		// x-1 : log(2)
+	fxam
+	fnstsw
+	andb	$0x45, %ah
+	cmpb	$0x40, %ah
+	jne	5f
+	fabs			// log(1) is +0 in all rounding modes.
+5:	fstp	%st(1)		// x-1 : log(2)
 	fyl2xp1			// log(x)
 	fstpl	-8(%rsp)
 	LOAD_DOUBLE_REG (-8(%rsp), 0)
@@ -65,3 +66,29 @@ ENTRY(__ieee754_log)
 	LOAD_DOUBLE_REG (-8(%rsp), 0)
 	ret
 END (__ieee754_log)
+
+ENTRY(__log_finite)
+	LOAD_REG_K1
+	STORE_DOUBLE_REG (0, -8(%rsp))
+	fldln2			// log(2)
+	fldl	-8(%rsp)		// x : log(2)
+	fld	%st		// x : x : log(2)
+	fsubl	MO(one)		// x-1 : x : log(2)
+	fld	%st		// x-1 : x-1 : x : log(2)
+	fabs			// |x-1| : x-1 : x : log(2)
+	fcompl	MO(limit)	// x-1 : x : log(2)
+	fnstsw			// x-1 : x : log(2)
+	andb	$0x45, %ah
+	jz	2b
+	fxam
+	fnstsw
+	andb	$0x45, %ah
+	cmpb	$0x40, %ah
+	jne	6f
+	fabs			// log(1) is +0 in all rounding modes.
+6:	fstp	%st(1)		// x-1 : log(2)
+	fyl2xp1			// log(x)
+	fstpl	-8(%rsp)
+	LOAD_DOUBLE_REG (-8(%rsp), 0)
+	ret
+END(__log_finite)

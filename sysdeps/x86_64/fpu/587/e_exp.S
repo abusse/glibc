@@ -4,12 +4,11 @@
  */
 
 #include <machine/asm.h>
+#include <x86_64-math-asm.h>
 
-RCSID("$NetBSD: e_exp.S,v 1.7 1996/07/03 17:31:28 jtc Exp $")
+DEFINE_DBL_MIN
 
-	.section .rodata
-	.p2align 3
-zero:	.double 0.0
+#define MO(op) op(%rip)
 
 	.text
 /* e^x = 2^(x * log2(e)) */
@@ -38,6 +37,7 @@ ENTRY(__ieee754_exp)
 	faddp				/* 2^(fract(x * log2(e))) */
 	fscale				/* e^x */
 	fstp	%st(1)
+	DBL_CHECK_FORCE_UFLOW
 	fstpl	-8(%rsp)
 	LOAD_DOUBLE_REG (-8(%rsp), 0)
 	ret
@@ -45,10 +45,30 @@ ENTRY(__ieee754_exp)
 1:	testl	$0x200, %eax		/* Test sign.  */
 	jz	2f			/* If positive, jump.  */
 	fstp	%st
-	LOAD_DOUBLE_REG (zero(%rip), 0)	/* Set result to 0.  */
-	ret
+	fldz				/* Set result to 0.  */
 2:
 	fstpl	-8(%rsp)
 	LOAD_DOUBLE_REG (-8(%rsp), 0)
 	ret
 END (__ieee754_exp)
+
+
+ENTRY(__exp_finite)
+	LOAD_REG_K1
+	STORE_DOUBLE_REG (0, -8(%rsp))
+	fldl2e
+	fmull	-8(%rsp)			/* x * log2(e) */
+	fld	%st
+	frndint				/* int(x * log2(e)) */
+	fsubr	%st,%st(1)		/* fract(x * log2(e)) */
+	fxch
+	f2xm1				/* 2^(fract(x * log2(e))) - 1 */
+	fld1
+	faddp				/* 2^(fract(x * log2(e))) */
+	fscale				/* e^x */
+	fstp	%st(1)
+	DBL_CHECK_FORCE_UFLOW
+	fstpl	-8(%rsp)
+	LOAD_DOUBLE_REG (-8(%rsp), 0)
+	ret
+END(__exp_finite)

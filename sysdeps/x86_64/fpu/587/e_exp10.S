@@ -3,10 +3,11 @@
  */
 
 #include <machine/asm.h>
+#include <x86_64-math-asm.h>
 
-	.section .rodata
-	.p2align 3
-zero:	.double 0.0
+DEFINE_DBL_MIN
+
+#define MO(op) op(%rip)
 
 	.text
 /* 10^x = 2^(x * log2(10)) */
@@ -35,6 +36,7 @@ ENTRY(__ieee754_exp10)
 	faddp				/* 2^(fract(x * log2(10))) */
 	fscale				/* e^x */
 	fstp	%st(1)
+	DBL_CHECK_FORCE_UFLOW
 	fstpl	-8(%rsp)
 	LOAD_DOUBLE_REG (-8(%rsp), 0)
 	ret
@@ -42,10 +44,10 @@ ENTRY(__ieee754_exp10)
 1:	testl	$0x200, %eax		/* Test sign.  */
 	jz	2f			/* If positive, jump.  */
 	fstp	%st
-	LOAD_DOUBLE_REG (zero(%rip), 0)	/* Set result to 0.  */
-	ret
+	fldz				/* Set result to 0.  */
 2:
 	fstpl	-8(%rsp)
 	LOAD_DOUBLE_REG (-8(%rsp), 0)
 	ret
 END (__ieee754_exp10)
+strong_alias (__ieee754_exp10, __exp10_finite)
