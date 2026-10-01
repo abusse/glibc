@@ -8,18 +8,14 @@
 
 ENTRY(__nearbyintf)
 	LOAD_REG_K1
-	STORE_FLOAT_REG (0, -4(%rsp))
-	flds	-4(%rsp)
-	fnstcw	-8(%rsp)
-	movl	-8(%rsp), %eax
-	orl	$0x20, %eax
-	movl	%eax, -12(%rsp)
-	fldcw	-12(%rsp)
+	STORE_FLOAT_REG (0, -8(%rsp))
+	flds	-8(%rsp)
+	/* Keep the exception flags as they were: frndint may raise inexact.  */
+	fnstenv	-40(%rsp)
 	frndint
-	fclex
-	fldcw	-8(%rsp)
-	fstps	-4(%rsp)
-	LOAD_FLOAT_REG (-4(%rsp), 0)
+	fldenv	-40(%rsp)
+	fstps	-8(%rsp)
+	LOAD_FLOAT_REG (-8(%rsp), 0)
 	ret
 END (__nearbyintf)
 weak_alias (__nearbyintf, nearbyintf)
