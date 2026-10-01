@@ -18,6 +18,11 @@
    02111-1307 USA.  */
 
 #include <sysdep.h>
+#include <x86_64-math-asm.h>
+
+#define MO(op) op(%rip)
+
+DEFINE_DBL_MIN
 
 	.text
 ENTRY(__ieee754_hypot)
@@ -41,6 +46,7 @@ ENTRY(__ieee754_hypot)
 	faddp			// x * x + y * y
 	fsqrt
 2:
+	DBL_CHECK_FORCE_UFLOW
 	fstpl	-8(%rsp)
 	LOAD_DOUBLE_REG (-8(%rsp), 0)
 	ret
