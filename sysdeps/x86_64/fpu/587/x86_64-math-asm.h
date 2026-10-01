@@ -77,4 +77,56 @@ ldbl_min:						\
 	fstp	%st(0);				\
 6464:
 
+
+/* Define constant for the minimum value of double, as in i386.  */
+#define DEFINE_DBL_MIN					\
+	.section .rodata.cst8,"aM",@progbits,8;		\
+	.p2align 3;					\
+	.type dbl_min,@object;				\
+dbl_min:						\
+	.byte 0, 0, 0, 0, 0, 0, 0x10, 0;		\
+	.size dbl_min, .-dbl_min;
+
+/* Raise underflow when the double value on the top of the stack is
+   subnormal (its square underflows); uses the red zone, clobbers %ax.  */
+#define DBL_CHECK_FORCE_UFLOW			\
+	fldl	MO(dbl_min);			\
+	fld	%st(1);				\
+	fabs;					\
+	fucompp;				\
+	fnstsw;					\
+	sahf;					\
+	jnc 6453f;				\
+	fld	%st(0);				\
+	fmul	%st(0);				\
+	fstpl	-16(%rsp);			\
+6453:
+
+/* Define constant for the minimum value of float, as in i386.  */
+#define DEFINE_FLT_MIN				\
+	.section .rodata.cst4,"aM",@progbits,4;	\
+	.p2align 2;				\
+	.type flt_min,@object;			\
+flt_min:					\
+	.byte 0, 0, 0x80, 0;			\
+	.size flt_min, .-flt_min;
+
+/* Raise underflow when the float value on the top of the stack is
+   subnormal and remove its excess range and precision, as in i386;
+   uses the red zone, clobbers %ax.  */
+#define FLT_CHECK_FORCE_UFLOW_NARROW		\
+	flds	MO(flt_min);			\
+	fld	%st(1);				\
+	fabs;					\
+	fucompp;				\
+	fnstsw;					\
+	sahf;					\
+	jnc 6424f;				\
+	fld	%st(0);				\
+	fmul	%st(0);				\
+	fstps	-24(%rsp);			\
+	fstps	-24(%rsp);			\
+	flds	-24(%rsp);			\
+6424:
+
 #endif /* x86_64-math-asm.h.  */
