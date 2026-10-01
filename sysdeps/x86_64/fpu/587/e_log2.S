@@ -8,19 +8,16 @@
 
 #include <machine/asm.h>
 
-#ifdef __ELF__
-	.section .rodata
-#else
-	.text
-#endif
-	.align ALIGNARG(4)
-	ASM_TYPE_DIRECTIVE(one,@object)
+	.section .rodata.cst8,"aM",@progbits,8
+
+	.p2align 3
+	.type one,@object
 one:	.double 1.0
 	ASM_SIZE_DIRECTIVE(one)
 	/* It is not important that this constant is precise.  It is only
 	   a value which is known to be on the safe side for using the
 	   fyl2xp1 instruction.  */
-	ASM_TYPE_DIRECTIVE(limit,@object)
+	.type limit,@object
 limit:	.double 0.29
 	ASM_SIZE_DIRECTIVE(limit)
 
@@ -32,7 +29,7 @@ ENTRY(__ieee754_log2)
 	LOAD_REG_K1
 	STORE_DOUBLE_REG (0, -8(%rsp))
 	fldl	MO(one)
-	fldl	-8(%rsp)	// x : 1
+	fldl	-8(%rsp)		// x : 1
 	fxam
 	fnstsw
 	fld	%st		// x : x : 1
@@ -45,7 +42,13 @@ ENTRY(__ieee754_log2)
 	fnstsw			// x-1 : x : 1
 	andb	$0x45, %ah
 	jz	2f
-	fstp	%st(1)		// x-1 : 1
+	fxam
+	fnstsw
+	andb	$0x45, %ah
+	cmpb	$0x40, %ah
+	jne	5f
+	fabs			// log2(1) is +0 in all rounding modes.
+5:	fstp	%st(1)		// x-1 : 1
 	fyl2xp1			// log(x)
 	fstpl	-8(%rsp)
 	LOAD_DOUBLE_REG (-8(%rsp), 0)
@@ -64,3 +67,4 @@ ENTRY(__ieee754_log2)
 	LOAD_DOUBLE_REG (-8(%rsp), 0)
 	ret
 END (__ieee754_log2)
+strong_alias (__ieee754_log2, __log2_finite)
