@@ -18,6 +18,7 @@
    02111-1307 USA.  */
 
 #include <machine/asm.h>
+#include <x86_64-math-asm.h>
 
 #ifdef __ELF__
 	.section .rodata
@@ -37,6 +38,9 @@ limit:	.double 0.29
 	ASM_SIZE_DIRECTIVE(limit)
 
 #define MO(op) op(%rip)
+
+	.text
+DEFINE_DBL_MIN
 
 	.text
 ENTRY(__asinh)
@@ -102,6 +106,7 @@ ENTRY(__asinh)
 4:	fld	%st			// x : x
 	faddl	MO(huge)		// huge+x : x
 	fstp	%st(0)			// x
+	DBL_CHECK_FORCE_UFLOW
 	fstpl	-8(%rsp)
 	LOAD_DOUBLE_REG (-8(%rsp), 0)
 	ret
