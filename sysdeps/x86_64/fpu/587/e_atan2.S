@@ -4,9 +4,15 @@
  */
 
 #include <machine/asm.h>
+#include <x86_64-math-asm.h>
+
+#define MO(op) op(%rip)
 
 RCSID("$NetBSD: e_atan2.S,v 1.4 1995/05/08 23:46:28 jtc Exp $")
 
+DEFINE_DBL_MIN
+
+	.text
 ENTRY(__ieee754_atan2)
 	LOAD_REG_K1
 	STORE_DOUBLE_REG (0, -8(%rsp))
@@ -14,6 +20,7 @@ ENTRY(__ieee754_atan2)
 	fldl	-8(%rsp)
 	fldl	-16(%rsp)
 	fpatan
+	DBL_CHECK_FORCE_UFLOW
 	fstpl	-8(%rsp)
 	LOAD_DOUBLE_REG (-8(%rsp), 0)
 	ret
