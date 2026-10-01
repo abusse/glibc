@@ -307,8 +307,14 @@ libc_feresetround_387 (fenv_t *e)
    x86_64, so that must be set for float128 computations.  */
 # define SET_RESTORE_ROUNDF128(RM) \
   SET_RESTORE_ROUND_GENERIC (RM, libc_feholdsetround_sse, libc_feresetround_sse)
-# define libc_feholdexcept_setroundf128	libc_feholdexcept_setround_sse
-# define libc_feupdateenv_testf128	libc_feupdateenv_test_sse
+# ifdef __KNC__
+/* K1OM libgcc raises the soft-fp exceptions with x87 operations.  */
+#  define libc_feholdexcept_setroundf128	default_libc_feholdexcept_setround
+#  define libc_feupdateenv_testf128	default_libc_feupdateenv_test
+# else
+#  define libc_feholdexcept_setroundf128	libc_feholdexcept_setround_sse
+#  define libc_feupdateenv_testf128	libc_feupdateenv_test_sse
+# endif
 #else
 /* The 387 rounding mode is used by soft-fp for 32-bit, but whether
    387 or SSE exceptions are used depends on whether libgcc was built
